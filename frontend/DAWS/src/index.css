@@ -1,2 +1,31 @@
 @import "tailwindcss";
 
+/* Enable dark mode */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Light Theme */
+:root {
+  --bg: #ffffff;
+  --text: #0d1117;
+  --toggle-track: #d1d5db;  /* gray-300 */
+  --toggle-knob: #0d1117;
+}
+
+/* Dark Theme */
+html.dark {
+  --bg: #0d1117;
+  --text: #ffffff;
+  --toggle-track: #f89f23;
+  --toggle-knob: #ffffff;
+}
+
+/* Apply globally */
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+
