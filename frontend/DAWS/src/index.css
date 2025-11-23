@@ -8,17 +8,29 @@ html.dark {
 /* Light Theme */
 :root {
   --bg: #ffffff;
+  --bg2: #f3f4f6;
   --text: #0d1117;
   --toggle-track: #d1d5db;  /* gray-300 */
   --toggle-knob: #0d1117;
+  --card-bg: #f8f9fa;
+  --card-border: #d0d7de;
+
+  --input-bg: #ffffff;
+  --output-bg: #ffffff;
 }
 
 /* Dark Theme */
 html.dark {
   --bg: #0d1117;
+  --bg2: #161b22;
   --text: #ffffff;
   --toggle-track: #f89f23;
   --toggle-knob: #ffffff;
+  --card-bg: #161b22;
+  --card-border: #30363d;
+
+  --input-bg: #0d1117;
+  --output-bg: #0d1117;
 }
 
 /* Apply globally */
@@ -28,4 +40,29 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* ------------------------------------------------- */
+/* 🔥 ADD THIS PATCH — Fix white boxes in dark mode */
+/* ------------------------------------------------- */
 
+/* Apply theme variables to all UI elements */
+textarea,
+select,
+input,
+.card,
+.box,
+section,
+div.theme-box {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* GitHub dark mode surfaces */
+html.dark textarea,
+html.dark select,
+html.dark input,
+html.dark .theme-box,
+html.dark .card,
+html.dark section {
+  background-color: #161b22 !important;
+  color: #e6edf3 !important;
+}

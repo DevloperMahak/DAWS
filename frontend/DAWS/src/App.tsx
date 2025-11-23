@@ -1,10 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import AppLayout from "./layouts/AppLayout";
 import RequirementsAgent from "./agents/RequirementAgent";
 import PlannerAgent from "./agents/PlannerAgent";
+import DocumentationAgent from "./agents/DocumentationAgent";
+import DevAssistantAgent from "./agents/DevAssistantAgent";
+import KnowledgeAgent from "./agents/KnowledgeAgent";
 
 export default function App() {
   return (
@@ -33,11 +35,11 @@ export default function App() {
           </AppLayout>
         }
       />
-      {/* <Route
+      <Route
         path="/docs"
         element={
           <AppLayout>
-            <DocsPage />
+            <DocumentationAgent />
           </AppLayout>
         }
       />
@@ -45,7 +47,7 @@ export default function App() {
         path="/assistant"
         element={
           <AppLayout>
-            <DevAssistantPage />
+            <DevAssistantAgent />
           </AppLayout>
         }
       />
@@ -53,10 +55,10 @@ export default function App() {
         path="/knowledge"
         element={
           <AppLayout>
-            <KnowledgePage />
+            <KnowledgeAgent />
           </AppLayout>
-        } 
-      />*/}
+        }
+      />
     </Routes>
   );
 }

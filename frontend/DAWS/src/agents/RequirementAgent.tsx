@@ -12,7 +12,6 @@ export default function RequirementsAgent() {
     setLoading(true);
     setResult("");
 
-    // 🔥 Mock API response – you will replace this with your own backend later
     setTimeout(() => {
       setResult(`
 🔹 **Functional Requirements**
@@ -33,10 +32,10 @@ export default function RequirementsAgent() {
     <div className="px-4 py-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-[#e6edf3]">
+        <h1 className="text-3xl font-bold text-[var(--text)]">
           Requirements Extraction Agent
         </h1>
-        <p className="text-sm text-gray-600 dark:text-[#8b949e]">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Paste project description and extract features, user stories &
           acceptance criteria.
         </p>
@@ -51,9 +50,10 @@ export default function RequirementsAgent() {
         <select
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          className="px-4 py-2 rounded-md bg-white dark:bg-[#161b22] 
-          text-gray-800 dark:text-gray-200 border border-gray-300 
-          dark:border-gray-700 focus:outline-none"
+          className="px-4 py-2 rounded-md 
+          bg-[var(--bg)] text-[var(--text)]
+          border border-gray-300 dark:border-gray-700
+          focus:outline-none"
         >
           <option value="gpt-4">ChatGPT (GPT-4)</option>
           <option value="gpt-4o">ChatGPT (GPT-4o)</option>
@@ -73,32 +73,35 @@ export default function RequirementsAgent() {
           rows={8}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-white dark:bg-[#161b22] 
-          text-gray-800 dark:text-gray-200 border border-gray-300 
-          dark:border-gray-700 focus:outline-none resize-none"
+          className="w-full px-4 py-3 rounded-lg
+          bg-[var(--bg)] text-[var(--text)]
+          border border-gray-300 dark:border-gray-700
+          focus:outline-none resize-none"
           placeholder="Paste your project idea or document here..."
         />
       </div>
 
-      {/* Action Button */}
+      {/* Button */}
       <button
         onClick={handleExtract}
         disabled={loading}
-        className="px-6 py-3 rounded-lg bg-[#f89f23] hover:bg-[#ffb647] text-black 
-        font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+        className="px-6 py-3 rounded-lg bg-[#f89f23] hover:bg-[#ffb647]
+        text-black font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? "Extracting..." : "Extract Requirements"}
       </button>
 
-      {/* Output Panel */}
+      {/* Output */}
       <div className="mt-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-[#e6edf3] mb-2">
+        <h2 className="text-lg font-semibold text-[var(--text)] mb-2">
           Output
         </h2>
 
         <div
-          className="min-h-[180px] p-4 rounded-xl bg-gray-50 dark:bg-[#0d1117] 
-        border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 whitespace-pre-line"
+          className="min-h-[180px] p-4 rounded-xl
+         bg-[var(--bg2)] text-[var(--text)]
+          border border-gray-300 dark:border-gray-700
+          text-[var(--text)] whitespace-pre-line"
         >
           {loading ? (
             <div className="animate-pulse text-gray-500 dark:text-gray-400">
