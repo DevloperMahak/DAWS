@@ -10,10 +10,14 @@ html.dark {
   --bg: #ffffff;
   --bg2: #f3f4f6;
   --text: #0d1117;
-  --toggle-track: #d1d5db;  /* gray-300 */
+  --gradient-border: linear-gradient(90deg, #8441A4, #FF5894);
+
+  /* Your requested border colours */
+  --border: #8441A4;      /* Purple */
+
+  --toggle-track: #d1d5db;
   --toggle-knob: #0d1117;
   --card-bg: #f8f9fa;
-  --card-border: #d0d7de;
 
   --input-bg: #ffffff;
   --output-bg: #ffffff;
@@ -24,10 +28,14 @@ html.dark {
   --bg: #0d1117;
   --bg2: #161b22;
   --text: #ffffff;
-  --toggle-track: #f89f23;
+  --gradient-border: linear-gradient(90deg, #FF5894, #8441A4);
+
+  /* Your requested border colours */
+  --border: #FF5894;       /* Pink */
+
+  --toggle-track: var(--border);
   --toggle-knob: #ffffff;
   --card-bg: #161b22;
-  --card-border: #30363d;
 
   --input-bg: #0d1117;
   --output-bg: #0d1117;
@@ -40,11 +48,24 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* ------------------------------------------------- */
-/* 🔥 ADD THIS PATCH — Fix white boxes in dark mode */
-/* ------------------------------------------------- */
+/* --------------------------------------------- */
+/* 🔥 BORDER FIX — Makes ALL borders use your theme */
+/* --------------------------------------------- */
 
-/* Apply theme variables to all UI elements */
+*,
+textarea,
+select,
+input,
+.card,
+.box,
+section,
+.theme-box,
+div,
+button {
+  border-color: var(--border) !important;
+}
+
+/* Components background fix */
 textarea,
 select,
 input,
@@ -56,7 +77,7 @@ div.theme-box {
   color: var(--text);
 }
 
-/* GitHub dark mode surfaces */
+/* GitHub-style dark surfaces */
 html.dark textarea,
 html.dark select,
 html.dark input,

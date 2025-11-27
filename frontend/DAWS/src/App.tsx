@@ -11,54 +11,15 @@ import KnowledgeAgent from "./agents/KnowledgeAgent";
 export default function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <AppLayout>
-            <Home />
-          </AppLayout>
-        }
-      />
-      <Route
-        path="/requirements"
-        element={
-          <AppLayout>
-            <RequirementsAgent />
-          </AppLayout>
-        }
-      />
-      <Route
-        path="/planner"
-        element={
-          <AppLayout>
-            <PlannerAgent />
-          </AppLayout>
-        }
-      />
-      <Route
-        path="/docs"
-        element={
-          <AppLayout>
-            <DocumentationAgent />
-          </AppLayout>
-        }
-      />
-      <Route
-        path="/assistant"
-        element={
-          <AppLayout>
-            <DevAssistantAgent />
-          </AppLayout>
-        }
-      />
-      <Route
-        path="/knowledge"
-        element={
-          <AppLayout>
-            <KnowledgeAgent />
-          </AppLayout>
-        }
-      />
+      {/* Layout Route */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/requirements" element={<RequirementsAgent />} />
+        <Route path="/planner" element={<PlannerAgent />} />
+        <Route path="/docs" element={<DocumentationAgent />} />
+        <Route path="/assistant" element={<DevAssistantAgent />} />
+        <Route path="/knowledge" element={<KnowledgeAgent />} />
+      </Route>
     </Routes>
   );
 }

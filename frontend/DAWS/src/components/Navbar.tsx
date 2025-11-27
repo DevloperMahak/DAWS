@@ -1,37 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import GlassToggle from "./Glasstoggle";
 
 export default function Navbar() {
-  const [theme, setTheme] = useState<"light" | "dark">(
-    (localStorage.getItem("theme") as "light" | "dark") ||
-      (window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light")
-  );
-
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((t) => (t === "light" ? "dark" : "light"));
-
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const links = [
+    { to: "/", label: "Home" },
+    { to: "/requirements", label: "Requirements" },
+    { to: "/planner", label: "Planner" },
+    { to: "/docs", label: "Docs" },
+    { to: "/assistant", label: "Dev Assistant" },
+  ];
 
   return (
     <nav
       className="
-        backdrop-blur-sm border-b
-        bg-[color:var(--bg)/80]
+        backdrop-blur-md border-b
+        bg-[color-mix(in_oklab,var(--bg),transparent 15%)]
         text-[var(--text)]
-        border-[color:var(--text)/20]
+        border-[color-mix(in_oklab,var(--text),transparent 80%)]
         transition-colors duration-300
       "
     >
@@ -46,48 +35,56 @@ export default function Navbar() {
               DAWS
             </button>
 
-            {/* Navbar Links */}
+            {/* NAV LINKS */}
             <div className="hidden md:flex items-center space-x-2 text-sm">
-              <Link
-                to="/"
-                className="px-3 py-2 text-[color:var(--text)/70] hover:text-[#f89f23]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/requirements"
-                className="px-3 py-2 text-[color:var(--text)/70] hover:text-[#f89f23]"
-              >
-                Requirements
-              </Link>
-              <Link
-                to="/planner"
-                className="px-3 py-2 text-[color:var(--text)/70] hover:text-[#f89f23]"
-              >
-                Planner
-              </Link>
-              <Link
-                to="/docs"
-                className="px-3 py-2 text-[color:var(--text)/70] hover:text-[#f89f23]"
-              >
-                Docs
-              </Link>
-              <Link
-                to="/assistant"
-                className="px-3 py-2 text-[color:var(--text)/70] hover:text-[#f89f23]"
-              >
-                Dev Assistant
-              </Link>
+              {links.map((l) => {
+                const active = location.pathname === l.to;
+                return (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    className={`
+                      px-3 py-2 relative
+                      ${
+                        active
+                          ? "text-transparent bg-clip-text bg-gradient-to-r from-[#8441A4] to-[#FF5894]"
+                          : "text-[color:var(--text)/70]"
+                      }
+                      hover:text-transparent hover:bg-clip-text 
+                      hover:bg-gradient-to-r hover:from-[#8441A4] hover:to-[#FF5894]
+                      transition
+                    `}
+                  >
+                    {l.label}
+
+                    {/* Active underline gradient */}
+                    {/* {active && (
+                      <span
+                        className="
+                        absolute left-0 right-0 -bottom-1 h-[2px] 
+                        bg-gradient-to-r from-[#8441A4] to-[#FF5894] rounded-full
+                      "
+                      ></span>
+                    )} */}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* ⭐ GLASSMORPHISM TOGGLE ⭐ */}
-            <GlassToggle theme={theme} toggleTheme={toggleTheme} />
+            {/* Toggle */}
+            <GlassToggle />
 
-            {/* Button */}
+            {/* Gradient Button */}
             <div className="hidden sm:flex items-center">
-              <button className="px-4 py-2 rounded-md bg-[#f89f23] hover:bg-[#ffb647] text-black font-semibold">
+              <button
+                className="
+                  px-4 py-2 rounded-md font-semibold text-white 
+                  bg-gradient-to-r from-[#8441A4] to-[#FF5894]
+                  hover:opacity-90 transition
+                "
+              >
                 Get Started
               </button>
             </div>

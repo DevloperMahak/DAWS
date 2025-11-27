@@ -16,7 +16,9 @@ export default function Home() {
           {/* LEFT TEXT */}
           <div className="md:flex-1">
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-              DAWS — Developer AI Workspace System
+              <span className="bg-[linear-gradient(135deg,#8441A4,#FF5894)] bg-clip-text text-transparent">
+                DAWS — Developer AI Workspace System
+              </span>
             </h1>
 
             <p className="mt-5 text-lg opacity-80 max-w-2xl leading-relaxed">
@@ -25,14 +27,18 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
+              {/* GRADIENT BUTTON */}
               <Link
                 to="/requirements"
-                className="px-6 py-3 bg-[#238636] hover:bg-[#2ea043] 
+                className="px-6 py-3 
+                bg-[linear-gradient(135deg,#8441A4,#21D4FD)] 
+                hover:opacity-90
                 text-white font-semibold rounded-lg transition shadow-sm"
               >
                 Analyze Requirements
               </Link>
 
+              {/* OUTLINE BUTTON */}
               <Link
                 to="/assistant"
                 className="px-6 py-3 border rounded-lg 
@@ -49,15 +55,15 @@ export default function Home() {
           <div className="hidden md:block md:w-1/3">
             <div
               className="w-full h-56 rounded-2xl 
-              bg-[color-mix(in_oklab,var(--text),transparent 90%)]
+              bg-[linear-gradient(135deg,#8441A4,#21D4FD)]
               border border-[color-mix(in_oklab,var(--text),transparent 80%)]
               flex items-center justify-center"
             >
-              <div className="text-center">
-                <div className="text-xs uppercase tracking-wider opacity-70">
+              <div className="text-center text-white">
+                <div className="text-xs uppercase tracking-wider opacity-80">
                   Demo Preview
                 </div>
-                <div className="mt-2 text-lg font-semibold opacity-90">
+                <div className="mt-2 text-lg font-semibold">
                   Interactive Agent Workspace
                 </div>
               </div>
@@ -104,7 +110,8 @@ export default function Home() {
               className="p-6 rounded-xl transition
               bg-[var(--bg)] text-[var(--text)]
               border border-[color-mix(in_oklab,var(--text),transparent 80%)]
-              hover:border-[#238636] hover:shadow-md"
+              hover:border-[linear-gradient(135deg,#8441A4,#FF5894)]
+              hover:shadow-lg"
             >
               <h3 className="text-lg font-semibold">{f.title}</h3>
               <p className="mt-2 opacity-80 text-sm leading-relaxed">

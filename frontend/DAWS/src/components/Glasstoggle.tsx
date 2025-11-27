@@ -1,11 +1,8 @@
 import React from "react";
+import { useStore } from "../store/useStore";
 
-type Props = {
-  theme: "light" | "dark";
-  toggleTheme: () => void;
-};
-
-export default function GlassToggle({ theme, toggleTheme }: Props) {
+export default function GlassToggle() {
+  const { theme, toggleTheme } = useStore();
   return (
     <div
       onClick={toggleTheme}
