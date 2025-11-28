@@ -19,8 +19,17 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const res = await loginUser(form); // pass form object
-      localStorage.setItem("token", res.data.token); // save JWT
-      navigate("/"); // redirect to homepage
+
+      //  Save token
+      localStorage.setItem("daws_token", res.data.token);
+
+      //  Save user info (optional but useful)
+      if (res.data.user) {
+        localStorage.setItem("daws_user", JSON.stringify(res.data.user));
+      }
+
+      //  Auto redirect to dashboard
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }

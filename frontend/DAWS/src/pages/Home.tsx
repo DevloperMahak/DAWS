@@ -1,7 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  // AUTO-REDIRECT LOGIC
+  useEffect(() => {
+    const user = localStorage.getItem("daws_user"); // we saved this after login
+
+    if (!user) {
+      navigate("/login"); // user not logged in → go to login page
+    }
+  }, [navigate]);
+
   return (
     <div className="space-y-16">
       {/* ===========================
@@ -31,7 +42,7 @@ export default function Home() {
               <Link
                 to="/requirements"
                 className="px-6 py-3 
-                bg-[linear-gradient(135deg,#8441A4,#21D4FD)] 
+                bg-gradient-to-r from-[#8441A4] to-[#FF5894] 
                 hover:opacity-90
                 text-white font-semibold rounded-lg transition shadow-sm"
               >
@@ -55,7 +66,7 @@ export default function Home() {
           <div className="hidden md:block md:w-1/3">
             <div
               className="w-full h-56 rounded-2xl 
-              bg-[linear-gradient(135deg,#8441A4,#21D4FD)]
+             bg-gradient-to-r from-[#8441A4] to-[#FF5894]
               border border-[color-mix(in_oklab,var(--text),transparent 80%)]
               flex items-center justify-center"
             >

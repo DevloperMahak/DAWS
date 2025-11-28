@@ -12,6 +12,7 @@ import PlannerAgent from "../agents/PlannerAgent";
 import DocumentationAgent from "../agents/DocumentationAgent";
 import DevAssistantAgent from "../agents/DevAssistantAgent";
 import KnowledgeAgent from "../agents/KnowledgeAgent";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {
   return (
@@ -21,7 +22,13 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
 
       {/* App Routes with Layout */}
-      <Route element={<AppLayout />}>
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/" element={<Home />} />
         <Route path="/requirements" element={<RequirementsAgent />} />
         <Route path="/planner" element={<PlannerAgent />} />

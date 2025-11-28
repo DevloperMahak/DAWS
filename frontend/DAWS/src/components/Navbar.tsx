@@ -6,6 +6,12 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleLogout = () => {
+    localStorage.removeItem("daws_token");
+    localStorage.removeItem("daws_user");
+    window.location.href = "/login"; // force redirect
+  };
+
   const links = [
     { to: "/", label: "Home" },
     { to: "/requirements", label: "Requirements" },
@@ -77,7 +83,7 @@ export default function Navbar() {
             <GlassToggle />
 
             {/* Gradient Button */}
-            <div className="hidden sm:flex items-center">
+            <div className="hidden sm:flex items-center gap-4">
               <button
                 className="
                   px-4 py-2 rounded-md font-semibold text-white 
@@ -86,6 +92,14 @@ export default function Navbar() {
                 "
               >
                 Get Started
+              </button>
+              {/*  Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-md font-semibold 
+              bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                Logout
               </button>
             </div>
           </div>
