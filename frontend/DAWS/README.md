@@ -1,73 +1,259 @@
-# React + TypeScript + Vite
+🚩 1. Problem Statement
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Software development involves a lot of repetitive manual work:
 
-Currently, two official plugins are available:
+Writing requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Creating functional/technical documents
 
-## React Compiler
+Breaking features into tasks
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+Designing architecture
 
-## Expanding the ESLint configuration
+Planning timelines
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Updating docs again & again
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Teams waste hours doing planning work instead of writing code.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Developers need an AI Workspace that handles everything — from idea → requirement → plan → documentation.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+🚀 2. Solution: DAWS (Developer AI Workspace)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+DAWS is a unified AI-powered workspace where you can:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+✔ Enter any idea / problem / feature
+✔ AI converts it into:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Requirements
+
+Architecture
+
+Mindmaps
+
+Breakdown / flow
+
+Tasks & subtasks
+
+Project Plan
+
+Documentation
+
+✔ Built with:
+
+Gemini 2.5 Pro (Planning, Docs)
+
+Gemini Flash (Fast inference)
+
+NotebookLM-like prompt chaining
+
+Modular “Agents”:
+
+Requirements Agent
+
+Planner Agent
+
+Docs Agent
+
+🧩 3. Key Features
+🔹 Requirements Agent
+
+Extracts:
+
+Functional Requirements
+
+Non-Functional Requirements
+
+Constraints
+
+Acceptance Criteria
+
+Priority, Status, Metadata
+
+🔹 Planner Agent (NotebookLM Mode)
+
+Generates:
+
+Mindmap
+
+Architecture Diagram (text-based)
+
+Feature Breakdown
+
+Sprint Tasks
+
+Milestones
+
+Timeline
+
+🔹 Documentation Agent
+
+Produces:
+
+Technical documentation
+
+API docs
+
+System design
+
+Developer onboarding docs
+
+🔹 Modern UI
+
+Dark/Light theme
+
+Beautiful panels
+
+Output formatting
+
+Fast API integration
+
+🏛 4. Architecture
+┌───────────────────────────┐
+│ Frontend │
+│ React + Vite + TS │
+│ │
+│ ┌─────────────────────┐ │
+User Input ─────────────┤ │ Requirements Agent │ │
+│ ├─────────────────────┤ │
+│ │ Planning Agent │ │
+│ ├─────────────────────┤ │
+│ │ Docs Agent │ │
+│ └─────────────────────┘ │
+└───────────┬───────────────┘
+│
+REST API Requests
+│
+┌───────────▼──────────────┐
+│ BACKEND │
+│ Node.js + Express │
+│ │
+│ llmService.js │
+│ - Gemini 2.5 Pro │
+│ - Gemini Flash │
+└───────────┬──────────────┘
+│
+Gemini AI API
+
+🧰 5. Tech Stack
+Frontend
+
+React
+
+TypeScript
+
+Axios
+
+Tailwind CSS
+
+Context + Theming
+
+Backend
+
+Node.js
+
+Express
+
+Google Gemini API
+
+Environment Variables (.env)
+
+📁 6. Folder Structure
+DAWS/
+│
+├── backend/
+│ ├── controllers/
+│ │ ├── requirementsController.js
+│ │ ├── planningController.js
+│ │ └── documentationController.js
+│ ├── routes/
+│ │ └── agentsRoutes.js
+│ ├── services/
+│ │ └── llmService.js
+│ ├── server.js
+│ └── package.json
+│
+└── frontend/
+├── src/
+│ ├── agents/
+│ │ ├── RequirementsAgent.tsx
+│ │ ├── PlannerAgent.tsx
+│ │ └── DocsAgent.tsx
+│ ├── utils/
+│ │ └── agentsApi.ts
+│ └── App.tsx
+├── package.json
+
+🔧 7. Setup Instructions
+Backend Setup
+cd backend
+npm install
+
+Create .env:
+
+GEMINI_API_KEY=your_key_here
+PORT=5000
+
+Run backend:
+
+npm start
+
+Frontend Setup
+cd frontend
+npm install
+npm run dev
+
+🔑 8. Environment Variables
+GEMINI_API_KEY=your_google_api_key
+
+📡 9. API Endpoints
+Method Endpoint Purpose
+POST /agents/requirements AI requirement extraction
+POST /agents/planning NotebookLM-style planning
+POST /agents/docs Documentation generator
+🧠 10. Agents Showcase
+📌 Requirements Agent
+
+Extracts detailed structured requirements.
+
+📌 Planning Agent (NotebookLM Mode)
+
+Produces:
+
+Mindmaps (ASCII text)
+
+System architecture
+
+Feature → tasks breakdown
+
+Milestones
+
+Sprint plans
+
+📌 Docs Agent
+
+Generates:
+
+Developer docs
+
+Tech specs
+
+API documentation
+
+🧭 11. Future Enhancements
+
+Real mindmap diagrams (Mermaid.js)
+
+Audio/video explanation using Gemini Audio
+
+Multi-agent orchestration
+
+Project saving to database
+
+PDF export
+
+Task → Jira/GitHub sync
+
+🏁 12. Conclusion
+
+DAWS is a powerful AI-driven software planning assistant designed to reduce manual developer workload. With Gemini AI’s reasoning and NotebookLM-style planning, it lets developers focus on building, not writing documents.
