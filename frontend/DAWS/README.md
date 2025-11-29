@@ -1,259 +1,70 @@
-🚩 1. Problem Statement
+# DAWS (Digital Agile Workflow Suite)
 
-Software development involves a lot of repetitive manual work:
+![DAWS Logo](./assets/logo.png)
 
-Writing requirements
+## Table of Contents
 
-Creating functional/technical documents
+- [Project Overview](#project-overview)
+- [Problem Statement](#problem-statement)
+- [Solution](#solution)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Technologies Used](#technologies-used)
+- [Setup & Installation](#setup--installation)
+- [Folder Structure](#folder-structure)
+- [Usage](#usage)
+- [Screenshots / Diagrams](#screenshots--diagrams)
+- [Contributing](#contributing)
+- [License](#license)
 
-Breaking features into tasks
+---
 
-Designing architecture
+## Project Overview
 
-Planning timelines
+**DAWS** is a unified platform for software development teams that integrates multiple tools into a single dashboard. It streamlines the development workflow by combining task management, documentation, design, code assistance, and collaboration tools, reducing context-switching and increasing productivity.
 
-Updating docs again & again
+---
 
-Teams waste hours doing planning work instead of writing code.
+## Problem Statement
 
-Developers need an AI Workspace that handles everything — from idea → requirement → plan → documentation.
+Modern software teams face a fragmented workflow, using multiple tools simultaneously:
 
-🚀 2. Solution: DAWS (Developer AI Workspace)
+- **Task Management:** Jira
+- **Documentation:** Confluence / Notion / Google Docs
+- **Design Collaboration:** Figma
+- **Presentations:** Google Slides
+- **Coding Assistance:** ChatGPT / Gemini
+- **Version Control & Issues:** GitHub
 
-DAWS is a unified AI-powered workspace where you can:
+**Challenges faced:**
 
-✔ Enter any idea / problem / feature
-✔ AI converts it into:
+- Constant switching between tools reduces productivity.
+- Manual updates across tools lead to inconsistencies.
+- Difficulty tracking progress across multiple platforms.
+- Slower requirement-to-delivery cycles due to fragmented workflows.
 
-Requirements
+---
 
-Architecture
+## Solution
 
-Mindmaps
+DAWS solves this by providing a **centralized workspace** that integrates these tools into one unified interface. Key benefits:
 
-Breakdown / flow
+- **Single Dashboard:** Access tasks, docs, designs, and AI assistance in one place.
+- **Automated Sync:** Updates in one tool reflect across others automatically.
+- **Collaboration:** Real-time notifications and team communication inside the platform.
+- **AI Assistance:** Code suggestions, requirement analysis, and documentation help.
 
-Tasks & subtasks
+---
 
-Project Plan
+## Key Features
 
-Documentation
+1. **Task Management Integration** – Sync Jira tasks directly.
+2. **Documentation Hub** – Connect Notion and Google Docs.
+3. **Design Integration** – View and comment on Figma files.
+4. **Code Assistance** – AI-driven code suggestions and documentation.
+5. **Notifications & Alerts** – Stay updated on project progress.
+6. **Analytics Dashboard** – Visualize team performance and timelines.
 
-✔ Built with:
+---
 
-Gemini 2.5 Pro (Planning, Docs)
-
-Gemini Flash (Fast inference)
-
-NotebookLM-like prompt chaining
-
-Modular “Agents”:
-
-Requirements Agent
-
-Planner Agent
-
-Docs Agent
-
-🧩 3. Key Features
-🔹 Requirements Agent
-
-Extracts:
-
-Functional Requirements
-
-Non-Functional Requirements
-
-Constraints
-
-Acceptance Criteria
-
-Priority, Status, Metadata
-
-🔹 Planner Agent (NotebookLM Mode)
-
-Generates:
-
-Mindmap
-
-Architecture Diagram (text-based)
-
-Feature Breakdown
-
-Sprint Tasks
-
-Milestones
-
-Timeline
-
-🔹 Documentation Agent
-
-Produces:
-
-Technical documentation
-
-API docs
-
-System design
-
-Developer onboarding docs
-
-🔹 Modern UI
-
-Dark/Light theme
-
-Beautiful panels
-
-Output formatting
-
-Fast API integration
-
-🏛 4. Architecture
-┌───────────────────────────┐
-│ Frontend │
-│ React + Vite + TS │
-│ │
-│ ┌─────────────────────┐ │
-User Input ─────────────┤ │ Requirements Agent │ │
-│ ├─────────────────────┤ │
-│ │ Planning Agent │ │
-│ ├─────────────────────┤ │
-│ │ Docs Agent │ │
-│ └─────────────────────┘ │
-└───────────┬───────────────┘
-│
-REST API Requests
-│
-┌───────────▼──────────────┐
-│ BACKEND │
-│ Node.js + Express │
-│ │
-│ llmService.js │
-│ - Gemini 2.5 Pro │
-│ - Gemini Flash │
-└───────────┬──────────────┘
-│
-Gemini AI API
-
-🧰 5. Tech Stack
-Frontend
-
-React
-
-TypeScript
-
-Axios
-
-Tailwind CSS
-
-Context + Theming
-
-Backend
-
-Node.js
-
-Express
-
-Google Gemini API
-
-Environment Variables (.env)
-
-📁 6. Folder Structure
-DAWS/
-│
-├── backend/
-│ ├── controllers/
-│ │ ├── requirementsController.js
-│ │ ├── planningController.js
-│ │ └── documentationController.js
-│ ├── routes/
-│ │ └── agentsRoutes.js
-│ ├── services/
-│ │ └── llmService.js
-│ ├── server.js
-│ └── package.json
-│
-└── frontend/
-├── src/
-│ ├── agents/
-│ │ ├── RequirementsAgent.tsx
-│ │ ├── PlannerAgent.tsx
-│ │ └── DocsAgent.tsx
-│ ├── utils/
-│ │ └── agentsApi.ts
-│ └── App.tsx
-├── package.json
-
-🔧 7. Setup Instructions
-Backend Setup
-cd backend
-npm install
-
-Create .env:
-
-GEMINI_API_KEY=your_key_here
-PORT=5000
-
-Run backend:
-
-npm start
-
-Frontend Setup
-cd frontend
-npm install
-npm run dev
-
-🔑 8. Environment Variables
-GEMINI_API_KEY=your_google_api_key
-
-📡 9. API Endpoints
-Method Endpoint Purpose
-POST /agents/requirements AI requirement extraction
-POST /agents/planning NotebookLM-style planning
-POST /agents/docs Documentation generator
-🧠 10. Agents Showcase
-📌 Requirements Agent
-
-Extracts detailed structured requirements.
-
-📌 Planning Agent (NotebookLM Mode)
-
-Produces:
-
-Mindmaps (ASCII text)
-
-System architecture
-
-Feature → tasks breakdown
-
-Milestones
-
-Sprint plans
-
-📌 Docs Agent
-
-Generates:
-
-Developer docs
-
-Tech specs
-
-API documentation
-
-🧭 11. Future Enhancements
-
-Real mindmap diagrams (Mermaid.js)
-
-Audio/video explanation using Gemini Audio
-
-Multi-agent orchestration
-
-Project saving to database
-
-PDF export
-
-Task → Jira/GitHub sync
-
-🏁 12. Conclusion
-
-DAWS is a powerful AI-driven software planning assistant designed to reduce manual developer workload. With Gemini AI’s reasoning and NotebookLM-style planning, it lets developers focus on building, not writing documents.
+## Architecture
