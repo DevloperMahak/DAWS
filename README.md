@@ -1,8 +1,9 @@
 # DAWS (Digital Agile Workflow Suite)
 
-![DAWS Logo](./assets/logo.png)
+![DAWS Logo](<./frontend/DAWS/src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
 
 ## Table of Contents
+
 - [Project Overview](#project-overview)
 - [Problem Statement](#problem-statement)
 - [Solution](#solution)
@@ -19,21 +20,24 @@
 ---
 
 ## Project Overview
+
 **DAWS** is a unified platform for software development teams that integrates multiple tools into a single dashboard. It streamlines the development workflow by combining task management, documentation, design, code assistance, and collaboration tools, reducing context-switching and increasing productivity.
 
 ---
 
 ## Problem Statement
+
 Modern software teams face a fragmented workflow, using multiple tools simultaneously:
 
-- **Task Management:** Jira  
-- **Documentation:** Confluence / Notion / Google Docs  
-- **Design Collaboration:** Figma  
-- **Presentations:** Google Slides  
-- **Coding Assistance:** ChatGPT / Gemini  
-- **Version Control & Issues:** GitHub  
+- **Task Management:** Jira
+- **Documentation:** Confluence / Notion / Google Docs
+- **Design Collaboration:** Figma
+- **Presentations:** Google Slides
+- **Coding Assistance:** ChatGPT / Gemini
+- **Version Control & Issues:** GitHub
 
 **Challenges faced:**
+
 - Constant switching between tools reduces productivity.
 - Manual updates across tools lead to inconsistencies.
 - Difficulty tracking progress across multiple platforms.
@@ -42,6 +46,7 @@ Modern software teams face a fragmented workflow, using multiple tools simultane
 ---
 
 ## Solution
+
 DAWS solves this by providing a **centralized workspace** that integrates these tools into one unified interface. Key benefits:
 
 - **Single Dashboard:** Access tasks, docs, designs, and AI assistance in one place.
@@ -52,6 +57,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 ---
 
 ## Key Features
+
 1. **Task Management Integration** – Sync Jira tasks directly.
 2. **Documentation Hub** – Connect Notion and Google Docs.
 3. **Design Integration** – View and comment on Figma files.
@@ -62,4 +68,3 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 ---
 
 ## Architecture
-
