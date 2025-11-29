@@ -1,6 +1,6 @@
-# DAWS (Digital Agile Workflow Suite)
+# DAWS (Developer AI Workspace System)
 
-![DAWS Logo](./assets/logo.png)
+![DAWS Logo](<./src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
 
 ## Table of Contents
 
