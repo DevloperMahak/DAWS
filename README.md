@@ -1,4 +1,4 @@
-# DAWS (Digital Agile Workflow Suite)
+# DAWS (Developer AI Workspace System)
 
 ![DAWS Logo](<./frontend/DAWS/src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
 

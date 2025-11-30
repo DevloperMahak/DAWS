@@ -13,6 +13,7 @@ import DocumentationAgent from "../agents/DocumentationAgent";
 import DevAssistantAgent from "../agents/DevAssistantAgent";
 import KnowledgeAgent from "../agents/KnowledgeAgent";
 import ProtectedRoute from "./ProtectedRoute";
+import ProjectsPage from "../pages/projects";
 
 export default function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ export default function AppRoutes() {
         }
       >
         <Route path="/" element={<Home />} />
+        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/requirements" element={<RequirementsAgent />} />
         <Route path="/planner" element={<PlannerAgent />} />
         <Route path="/docs" element={<DocumentationAgent />} />

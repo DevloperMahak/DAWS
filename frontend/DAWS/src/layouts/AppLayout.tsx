@@ -6,12 +6,15 @@ import { Outlet } from "react-router-dom";
 export default function AppLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors">
-      <Navbar />
+      {/* SIDEBAR FIXED */}
+      <Sidebar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-6 py-10 bg-inherit">
-        <Sidebar />
-        {/* This is where child pages will render */}
-        <div className="flex-1 bg-inherit text-inherit">
+      <div className="ml-[260px] pt-16">
+        {/* NAVBAR */}
+        <Navbar />
+
+        {/* MAIN PAGE CONTENT */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <Outlet />
         </div>
       </div>
