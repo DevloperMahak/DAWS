@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { knowledgeAgent } from "../utils/agentsApi";
 
 export default function KnowledgeAgent() {
   const [query, setQuery] = useState("");
@@ -11,26 +12,14 @@ export default function KnowledgeAgent() {
     setLoading(true);
     setResponse(null);
 
-    // placeholder response
-    setTimeout(() => {
-      setResponse(`
-🔍 **AI Knowledge Search Result**
-
-**Query:** ${query}
-
-### 📘 Summary  
-AI provides a condensed understanding of the topic.
-
-### 🧠 Explanation  
-Detailed breakdown with easy explanation.
-
-### 📚 Extra Knowledge  
-Related terms, background concepts, and real-world examples.
-
-(Backend will generate real responses.)
-      `);
-      setLoading(false);
-    }, 1200);
+    try {
+      const res = await knowledgeAgent(query);
+      const data = res.data?.data || "No response";
+      setResponse(data);
+    } catch (err) {
+      setResponse("❌ Server error. Check backend.");
+    }
+    setLoading(false);
   };
 
   return (

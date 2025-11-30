@@ -1,84 +1,171 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { reqAgent } from "../utils/agentsApi";
 
 export default function RequirementsAgent() {
   const [model, setModel] = useState("gemini-1.5-pro");
   const [input, setInput] = useState("");
+  const [file, setFile] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
-  const [requirementsList, setRequirementsList] = useState([
-    {
-      id: "REQ-001",
-      title: "User authentication with email and social login",
-      type: "Functional",
-      priority: "Critical",
-      status: "Approved",
-      createdAt: "Jan 15",
-    },
-    // Add more sample items here
-  ]);
+  const [requirementsList, setRequirementsList] = useState([]);
 
+  const mediaRecorderRef = useRef(null);
+  const [recording, setRecording] = useState(false);
+
+  // 🎤 Start Audio Recording
+  const startRecording = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = recorder;
+
+    const audioChunks = [];
+
+    recorder.ondataavailable = (e) => audioChunks.push(e.data);
+    recorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: "audio/mp3" });
+      setAudioBlob(blob);
+    };
+
+    recorder.start();
+    setRecording(true);
+  };
+
+  // 🎤 Stop Recording
+  const stopRecording = () => {
+    mediaRecorderRef.current.stop();
+    setRecording(false);
+  };
+
+  // 📤 Submit to Backend
   const handleExtract = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() && !file && !audioBlob) return;
 
     setLoading(true);
     setResult("");
 
     try {
-      const response = await reqAgent({ text: input, model: model });
-      setResult(response.data.result || "No output received.");
-      // Optionally add extracted requirement to the list
+      const fd = new FormData();
+      fd.append("text", input);
+      fd.append("model", model);
+
+      if (file) fd.append("file", file);
+      if (audioBlob) fd.append("file", audioBlob);
+
+      const response = await reqAgent(fd);
+
+      setResult(response.data.result);
+
+      // Append requirement into list
       setRequirementsList((prev) => [
         ...prev,
         {
           id: `REQ-${(prev.length + 1).toString().padStart(3, "0")}`,
-          title: response.data.result || "New Requirement",
+          title: response.data.result.slice(0, 50) + "...",
           type: "Functional",
           priority: "Medium",
           status: "Draft",
           createdAt: new Date().toLocaleDateString(),
         },
       ]);
-    } catch (error: any) {
-      console.error("Error extracting requirements:", error);
-      setResult("❌ Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setResult("❌ Something went wrong");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="px-4 py-6 max-w-5xl mx-auto space-y-6 font-sans">
+    <div
+      className="min-h-screen p-6 transition-all"
+      style={{ background: "var(--bg)", color: "var(--text)" }}
+    >
       {/* Header */}
-      <div className="bg-[#1f2937] text-white px-4 py-2 rounded-t-lg">
-        <h1 className="text-xl font-bold flex justify-between">
-          📝 Requirements Agent
-          <span className="text-sm font-normal">AI Workspace</span>
+      <div
+        className="p-4 rounded-lg shadow-md"
+        style={{
+          background: "var(--card-bg)",
+          border: "1px solid var(--card-border)",
+        }}
+      >
+        <h1 className="text-2xl font-bold flex justify-between">
+          📝 Multimodal Requirements Agent
+          <span className="text-sm opacity-70">AI Workspace</span>
         </h1>
       </div>
 
-      {/* Input Box */}
-      <div className="border border-gray-400 rounded-lg p-4 space-y-3 bg-[#111827] text-white">
-        <div className="space-y-1">
-          <label className="text-sm font-medium">
-            Describe your requirement:
+      {/* Input Section */}
+      <div
+        className="mt-4 p-5 rounded-xl space-y-4"
+        style={{
+          background: "var(--card-bg)",
+          border: "1px solid var(--card-border)",
+        }}
+      >
+        <label className="font-semibold">Describe your requirement:</label>
+        <textarea
+          rows={5}
+          placeholder="I need users to sign in with multiple payment options..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="w-full p-3 rounded-md resize-none"
+          style={{
+            background: "var(--input-bg)",
+            border: "1px solid var(--card-border)",
+            color: "var(--text)",
+          }}
+        />
+
+        {/* File Upload */}
+        <div>
+          <label className="font-semibold">
+            Upload Image / Audio (optional):
           </label>
-          <textarea
-            rows={5}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-full p-3 rounded-md bg-[#1f2937] border border-gray-600 text-white focus:outline-none resize-none"
-            placeholder="I need users to be able to checkout with multiple payment methods..."
+          <input
+            type="file"
+            accept="image/*,audio/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="mt-2 w-full cursor-pointer"
           />
         </div>
 
+        {/* Audio Recording */}
+        <div className="flex gap-4 items-center">
+          {!recording ? (
+            <button
+              onClick={startRecording}
+              className="px-4 py-2 rounded-md bg-red-600 text-white"
+            >
+              🎤 Start Recording
+            </button>
+          ) : (
+            <button
+              onClick={stopRecording}
+              className="px-4 py-2 rounded-md bg-green-600 text-white"
+            >
+              ⏹ Stop Recording
+            </button>
+          )}
+
+          {audioBlob && (
+            <audio controls src={URL.createObjectURL(audioBlob)}></audio>
+          )}
+        </div>
+
         {/* Model Selector */}
-        <div className="flex items-center gap-3">
-          <label className="text-sm font-medium">AI Model:</label>
+        <div>
+          <label className="font-semibold">AI Model</label>
           <select
             value={model}
             onChange={(e) => setModel(e.target.value)}
-            className="px-3 py-1 rounded-md bg-[#1f2937] text-white border border-gray-600 focus:outline-none"
+            className="ml-2 px-3 py-2 rounded-md"
+            style={{
+              background: "var(--input-bg)",
+              border: "1px solid var(--card-border)",
+              color: "var(--text)",
+            }}
           >
             <option value="gemini-1.5-flash">gemini-1.5-flash</option>
             <option value="gemini-1.5-pro">gemini-1.5-pro</option>
@@ -86,80 +173,52 @@ export default function RequirementsAgent() {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-3 mt-2">
-          <button
-            onClick={handleExtract}
-            disabled={loading}
-            className="px-4 py-2 bg-[#f89f23] hover:bg-[#ffb647] text-black font-semibold rounded-md disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {loading ? "Extracting..." : "🤖 AI Parse"}
-          </button>
-          <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-            💾 Save Draft
-          </button>
-          <button className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-md">
-            ✅ Add to Project
-          </button>
-        </div>
+        <button
+          onClick={handleExtract}
+          disabled={loading}
+          className="w-full py-3 rounded-md font-semibold bg-yellow-500 text-black mt-2"
+        >
+          {loading ? "Extracting…" : "🤖 Extract Requirements"}
+        </button>
       </div>
 
       {/* Output Box */}
-      <div className="bg-[#111827] border border-gray-600 rounded-lg p-4 text-white min-h-[120px] whitespace-pre-line">
-        {loading ? (
-          <div className="animate-pulse text-gray-400">Processing…</div>
-        ) : result ? (
-          result
-        ) : (
-          <div className="text-gray-400 text-sm">Output will appear here…</div>
-        )}
+      <div
+        className="mt-4 p-4 rounded-xl whitespace-pre-line"
+        style={{
+          minHeight: 120,
+          background: "var(--card-bg)",
+          border: "1px solid var(--card-border)",
+        }}
+      >
+        {loading ? "Processing…" : result || "Output will appear here…"}
       </div>
 
       {/* Requirements List */}
-      <div className="bg-[#1f2937] rounded-lg p-4 space-y-2">
-        <div className="flex justify-between text-sm text-gray-300">
-          <span>Filters: [All] [Functional] [Technical] [Business]</span>
-          <span>Priority: [All] [Critical] [High] [Medium] [Low]</span>
-          <span>Status: [All] [Draft] [Approved] [Implemented]</span>
-        </div>
+      <div
+        className="mt-6 p-4 rounded-xl"
+        style={{
+          background: "var(--card-bg)",
+          border: "1px solid var(--card-border)",
+        }}
+      >
+        <h2 className="text-xl font-bold mb-3">📋 Extracted Requirements</h2>
 
-        <div className="space-y-2 mt-2">
-          {requirementsList.map((req) => (
-            <div
-              key={req.id}
-              className="border border-gray-600 rounded-md p-3 bg-[#111827] hover:bg-[#1e293b] transition"
-            >
-              <div className="flex justify-between items-center text-sm font-semibold">
-                <span
-                  className={
-                    req.priority === "Critical"
-                      ? "text-red-500"
-                      : "text-yellow-400"
-                  }
-                >
-                  🔴 {req.id} | {req.priority.toUpperCase()} | {req.status}
-                </span>
-                <div className="flex gap-2">
-                  <button className="text-gray-400 hover:text-white text-xs">
-                    View Details
-                  </button>
-                  <button className="text-gray-400 hover:text-white text-xs">
-                    Edit
-                  </button>
-                  <button className="text-gray-400 hover:text-white text-xs">
-                    Link to Plan
-                  </button>
-                  <button className="text-gray-400 hover:text-white text-xs">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="text-gray-200 mt-1 text-sm">{req.title}</div>
-              <div className="text-gray-400 text-xs">
-                Type: {req.type} | Created: {req.createdAt}
-              </div>
+        {requirementsList.map((req) => (
+          <div
+            key={req.id}
+            className="p-3 rounded-md mb-2"
+            style={{
+              background: "var(--input-bg)",
+              border: "1px solid var(--card-border)",
+            }}
+          >
+            <div className="font-semibold">
+              {req.id} — {req.priority}
             </div>
-          ))}
-        </div>
+            <div className="opacity-80">{req.title}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

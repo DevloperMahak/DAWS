@@ -12,8 +12,7 @@ html.dark {
   --text: #0d1117;
   --gradient-border: linear-gradient(90deg, #8441A4, #FF5894);
 
-  /* Your requested border colours */
-  --border: #8441A4;      /* Purple */
+  --border: #8441A4;
 
   --toggle-track: #d1d5db;
   --toggle-knob: #0d1117;
@@ -30,8 +29,7 @@ html.dark {
   --text: #ffffff;
   --gradient-border: linear-gradient(90deg, #FF5894, #8441A4);
 
-  /* Your requested border colours */
-  --border: #FF5894;       /* Pink */
+  --border: #FF5894;
 
   --toggle-track: var(--border);
   --toggle-knob: #ffffff;
@@ -48,33 +46,25 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* --------------------------------------------- */
-/* 🔥 BORDER FIX — Makes ALL borders use your theme */
-/* --------------------------------------------- */
+/* -----------------------------------------------------------
+   Fix: DO NOT override all div/button elements — ONLY inputs.
+   ----------------------------------------------------------- */
 
-*,
-textarea,
-select,
-input,
-.card,
-.box,
-section,
-.theme-box,
-div,
-button {
-  border-color: var(--border) !important;
+/* Borders apply globally EXCEPT cards with custom UI */
+*:not(.no-theme-border) {
+  border-color: var(--border);
 }
 
-/* Components background fix */
+/* Inputs & form elements follow theme */
 textarea,
 select,
 input,
 .card,
 .box,
 section,
-div.theme-box {
-  background-color: var(--bg);
-  color: var(--text);
+.theme-box {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
 }
 
 /* GitHub-style dark surfaces */
@@ -88,7 +78,7 @@ html.dark section {
   color: #e6edf3 !important;
 }
 
-/* Sidebar Scrollbar Style */
+/* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -101,6 +91,4 @@ html.dark section {
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-
-
 

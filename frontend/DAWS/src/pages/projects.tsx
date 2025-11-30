@@ -8,6 +8,8 @@ import {
   deleteProject,
 } from "../utils/projectApi";
 
+import { FaTrash, FaEdit, FaExternalLinkAlt } from "react-icons/fa";
+
 type Project = {
   id: number;
   user_id?: number;
@@ -28,7 +30,6 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       const projects = await getAllProjects();
-      console.log("Projects fetched from backend:", projects);
       setProjects(projects || []);
     } catch (err) {
       console.error("fetch projects error", err);
@@ -86,19 +87,20 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="p-6 bg-[var(--bg)] min-h-screen text-[var(--text)]">
+    <div className="p-6 min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Projects</h1>
-        <div className="flex gap-3">
-          <button
-            onClick={openCreate}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8441A4] to-[#FF5894] text-white"
-          >
-            + New Project
-          </button>
-        </div>
+        <h1 className="text-2xl font-bold">My Projects</h1>
+
+        <button
+          onClick={openCreate}
+          className="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-[#0AB2D7] to-[#308DEF]"
+        >
+          + New Project
+        </button>
       </div>
 
+      {/* PROJECT GRID */}
       {loading ? (
         <div>Loading...</div>
       ) : projects.length === 0 ? (
@@ -108,59 +110,84 @@ export default function ProjectsPage() {
           {projects.map((p) => (
             <div
               key={p.id}
-              className="p-4 rounded-lg border bg-[var(--card-bg)]"
+              className="relative rounded-xl p-4 shadow-md backdrop-blur-md hover:scale-[1.02] transition-all no-theme-border"
+              style={{
+                border: "2px solid transparent",
+                background:
+                  "linear-gradient(var(--bg), var(--bg)) padding-box, linear-gradient(90deg, #0AB2D7, #308DEF) border-box",
+              }}
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-lg font-semibold">{p.name}</h2>
-                  <p className="text-sm text-gray-500 dark:text-[#8b949e] mt-1">
+              <div className="flex justify-between items-start gap-2">
+                {/* TEXT SIDE */}
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold text-[var(--text)]">
+                    {p.name}
+                  </h2>
+                  <p className="text-sm text-[var(--text)]/60 mt-1 line-clamp-2">
                     {p.description}
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                {/* ACTION BUTTONS */}
+                <div className="flex flex-col gap-3 text-xl">
                   <button
                     onClick={() => navigate(`/projects/${p.id}`)}
-                    className="text-sm text-[#FF5894] hover:underline"
+                    className="hover:scale-110 transition text-[var(--border)]"
+                    title="Open Project"
                   >
-                    Open
+                    <FaExternalLinkAlt />
                   </button>
+
                   <button
                     onClick={() => openEdit(p)}
-                    className="text-sm text-gray-600 dark:text-[#cbd5e1]"
+                    className="hover:scale-110 transition text-yellow-400"
+                    title="Edit Project"
                   >
-                    Edit
+                    <FaEdit />
                   </button>
+
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="text-sm text-red-500"
+                    className="hover:scale-110 transition text-red-500"
+                    title="Delete Project"
                   >
-                    Delete
+                    <FaTrash />
                   </button>
                 </div>
               </div>
+
+              {/* FOLDER TAB TOP DESIGN */}
+              <div
+                className="absolute -top-3 left-4 w-16 h-3 rounded-t-lg"
+                style={{
+                  background: "linear-gradient(90deg, #0AB2D7, #308DEF)",
+                }}
+              />
             </div>
           ))}
         </div>
       )}
 
-      {/* Modal (simple) */}
+      {/* MODAL */}
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setModalOpen(false)}
           />
+
           <div className="bg-[var(--bg2)] p-6 rounded-lg z-10 w-full max-w-md border border-[color:var(--text)/10]">
             <h3 className="text-lg font-semibold mb-3">
               {editing ? "Edit" : "Create"} Project
             </h3>
+
             <input
               placeholder="Project name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full p-2 rounded border mb-3 bg-[var(--bg)]"
             />
+
             <textarea
               placeholder="Description"
               value={form.description}
@@ -170,10 +197,12 @@ export default function ProjectsPage() {
               className="w-full p-2 rounded border mb-3 bg-[var(--bg)]"
               rows={4}
             />
+
             <div className="flex justify-end gap-2">
               <button onClick={() => setModalOpen(false)} className="px-3 py-1">
                 Cancel
               </button>
+
               <button
                 onClick={handleSave}
                 className="px-3 py-1 bg-[#8441A4] text-white rounded"
