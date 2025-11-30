@@ -1,22 +1,47 @@
 import React, { useState } from "react";
+import { devChatAgent } from "../utils/agentsApi"; // <-- your API
 
 export default function DevAssistantAgent() {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
   const [tab, setTab] = useState("response");
+  const [loading, setLoading] = useState(false);
 
-  const generateResponse = () => {
+  const [data, setData] = useState({
+    response: "",
+    fixes: "",
+    optimized: "",
+    explain: "",
+  });
+
+  const generateResponse = async () => {
     if (!input.trim()) return;
 
-    setOutput(`
-🧠 **AI Developer Assistant Response**
+    setLoading(true);
 
-You asked:  
-${input}
+    try {
+      const res = await devChatAgent(input);
+      const ai = res.data?.data || "No output";
 
-✨ This is placeholder output.  
-Backend AI will replace this with real explanations, debugging, optimization, and code fixes.
-    `);
+      // BASIC SPLITTING INTO TABS
+      setData({
+        response: ai,
+        fixes:
+          "🔧 Extracting fixes:\n" + ai.replace(/```/g, "") || "No fixes found",
+        optimized:
+          "⚡ Optimized version:\n" + ai.replace(/```/g, "") ||
+          "No optimization found",
+        explain: "📘 Explanation:\n" + ai || "No explanation found",
+      });
+    } catch (err) {
+      setData({
+        response: "❌ Server error. Check backend.",
+        fixes: "",
+        optimized: "",
+        explain: "",
+      });
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -25,11 +50,11 @@ Backend AI will replace this with real explanations, debugging, optimization, an
         {/* HEADER */}
         <h1 className="text-3xl font-bold mb-4">💻 Developer Assistant</h1>
         <p className="text-sm opacity-70 mb-8">
-          Ask anything related to debugging, code explanation, optimization, or
-          development help.
+          Ask anything about debugging, optimization, code fixes, or development
+          help.
         </p>
 
-        {/* INPUT BOX */}
+        {/* INPUT CARD */}
         <div
           className="p-5 rounded-xl shadow-sm mb-8"
           style={{
@@ -56,14 +81,15 @@ Backend AI will replace this with real explanations, debugging, optimization, an
 
           <button
             onClick={generateResponse}
-            className="mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+            disabled={loading}
+            className="mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-50"
           >
-            Generate Response
+            {loading ? "Generating..." : "Generate Response"}
           </button>
         </div>
 
         {/* OUTPUT SECTION */}
-        {output && (
+        {data.response && (
           <div
             className="p-5 rounded-xl shadow-sm"
             style={{
@@ -98,16 +124,10 @@ Backend AI will replace this with real explanations, debugging, optimization, an
                 color: "var(--text)",
               }}
             >
-              {tab === "response" && <p>{output}</p>}
-              {tab === "fixes" && (
-                <p>🔧 AI-generated code fixes will appear here…</p>
-              )}
-              {tab === "optimized" && (
-                <p>⚡ Optimized code suggestions will appear here…</p>
-              )}
-              {tab === "explain" && (
-                <p>📘 AI explanation of your code will appear here…</p>
-              )}
+              {tab === "response" && <p>{data.response}</p>}
+              {tab === "fixes" && <p>{data.fixes}</p>}
+              {tab === "optimized" && <p>{data.optimized}</p>}
+              {tab === "explain" && <p>{data.explain}</p>}
             </div>
           </div>
         )}
