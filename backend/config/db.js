@@ -1,7 +1,6 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
 
-// Load .env at the very top
 dotenv.config();
 
 const pool = mysql.createPool({
@@ -9,11 +8,12 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  port: process.env.DB_PORT, // IMPORTANT for Railway
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
   ssl: {
-    rejectUnauthorized: true,
+    rejectUnauthorized: false, // Railway FIX
   },
 });
 
