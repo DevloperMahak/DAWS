@@ -7,7 +7,8 @@ import projectRoutes from "./routes/projectRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: "https://daws-frontend.onrender.com" }));
+
 app.use(express.json());
 
 // Routes
