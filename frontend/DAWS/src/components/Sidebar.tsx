@@ -7,14 +7,23 @@ import {
   CogIcon,
   SparklesIcon,
   ChatAlt2Icon,
+  FolderIcon,
 } from "./Icons";
 
-const logoUrl =
-  "/mnt/data/A_promotional_digital_graphic_design_showcases_DAW.png";
+const logoUrl = "/mnt/data/05baf53b-2f6f-493c-98c4-608c939f5a14.png";
 
 export default function Sidebar() {
-  const items = [
+  const mainItems = [
     { key: "dashboard", label: "Dashboard", to: "/", icon: <HomeIcon /> },
+    {
+      key: "projects",
+      label: "My Projects (3)",
+      to: "/projects",
+      icon: <FolderIcon />,
+    },
+  ];
+
+  const agentItems = [
     {
       key: "requirements",
       label: "Requirements",
@@ -40,21 +49,20 @@ export default function Sidebar() {
       to: "/knowledge",
       icon: <DocumentTextIcon />,
     },
-    { key: "settings", label: "Settings", to: "/settings", icon: <CogIcon /> },
   ];
 
   return (
     <aside
       className="
-      flex-shrink-0 w-72 hidden md:flex flex-col gap-4 p-4
-      transition-all duration-300
-      bg-[var(--bg)] text-[var(--text)]
-      border-r border-[color:var(--text)/20]
-    "
-      style={{ minHeight: "calc(100vh - 64px)" }}
+        fixed left-0 top-0 
+        h-screen w-72 
+        bg-[var(--bg)] text-[var(--text)]
+        border-r border-[color:var(--text)/20]
+        flex flex-col
+      "
     >
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-2">
+      {/* TOP LOGO */}
+      <div className="p-4 flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 flex items-center justify-center">
           <img
             src={logoUrl}
@@ -63,8 +71,10 @@ export default function Sidebar() {
           />
         </div>
         <div>
-          <div className="text-lg font-bold text-gray-900 dark:text-[#e6edf3]">
-            DAWS
+          <div className="text-2xl font-bold text-[var(--text)]">
+            <span className="bg-[linear-gradient(135deg,#8441A4,#FF5894)] bg-clip-text text-transparent">
+              DAWS
+            </span>
           </div>
           <div className="text-xs text-gray-500 dark:text-[#8b949e]">
             AI Workspace
@@ -72,58 +82,86 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Nav Items */}
-      <nav className="mt-4 flex-1">
-        {items.map((it) => (
+      {/* SCROLLABLE CONTENT */}
+      <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
+        {/* MAIN ITEMS */}
+        {mainItems.map((it) => (
           <NavLink
             key={it.key}
             to={it.to}
             className={({ isActive }) =>
-              `
-  group flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-all duration-150
-
-  ${
-    isActive
-      ? `
-      bg-gradient-to-r from-[#8441A4]/20 to-[#FF5894]/20
-      border-l-4 border-[#8441A4]
-      text-[#FF5894]
-      `
-      : `
-      text-gray-700 dark:text-[#cbd5e1] 
-      hover:bg-white/5 dark:hover:bg-white/5
-    `
-  }
-`
+              `group flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-all duration-150
+               ${
+                 isActive
+                   ? "bg-gradient-to-r from-[#8441A4]/20 to-[#FF5894]/20 border-l-4 border-[#8441A4] text-[#FF5894]"
+                   : "text-gray-700 dark:text-[#cbd5e1] hover:bg-white/5 dark:hover:bg-white/5"
+               }`
             }
           >
             {({ isActive }) => (
               <>
                 <span
-                  className={`
-          w-6 h-6 
-          ${isActive ? "text-[#FF5894]" : "text-gray-600 dark:text-[#8b949e]"}
-          group-hover:text-[#FF5894]
-        `}
+                  className={`w-6 h-6 ${
+                    isActive
+                      ? "text-[#FF5894]"
+                      : "text-gray-600 dark:text-[#8b949e]"
+                  } group-hover:text-[#FF5894]`}
                 >
                   {it.icon}
                 </span>
-
                 <span className="text-sm font-medium">{it.label}</span>
               </>
             )}
           </NavLink>
         ))}
-      </nav>
 
-      {/* Project Box */}
-      <div className="mt-auto px-2">
-        <div className="text-xs text-gray-500 dark:text-[#8b949e] mb-2">
-          Project
+        {/* AI AGENTS HEADER */}
+        <div className="text-xs text-gray-500 dark:text-[#8b949e] mt-4 mb-2 flex items-center justify-center">
+          <span className="flex-grow border-t border-gray-500/40 mx-2"></span>
+          AI AGENTS
+          <span className="flex-grow border-t border-gray-500/40 mx-2"></span>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 dark:bg-white/3 text-sm text-gray-200">
-          AskMyTutor Revamp
-        </div>
+
+        {/* AGENT ITEMS */}
+        {agentItems.map((it) => (
+          <NavLink
+            key={it.key}
+            to={it.to}
+            className={({ isActive }) =>
+              `group flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-all duration-150
+               ${
+                 isActive
+                   ? "bg-gradient-to-r from-[#8441A4]/20 to-[#FF5894]/20 border-l-4 border-[#8441A4] text-[#FF5894]"
+                   : "text-gray-700 dark:text-[#cbd5e1] hover:bg-white/5 dark:hover:bg-white/5"
+               }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <span
+                  className={`w-6 h-6 ${
+                    isActive
+                      ? "text-[#FF5894]"
+                      : "text-gray-600 dark:text-[#8b949e]"
+                  } group-hover:text-[#FF5894]`}
+                >
+                  {it.icon}
+                </span>
+                <span className="text-sm font-medium">{it.label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+
+      {/* BOTTOM FIXED BUTTONS */}
+      <div className="p-3 border-t border-white/10 flex flex-col gap-2 bg-[var(--bg)]">
+        <button className="w-full py-2 text-sm font-medium text-white rounded-lg bg-gradient-to-r from-purple-500 to-pink-500">
+          Export
+        </button>
+        <button className="w-full py-2 text-sm font-medium text-gray-200 rounded-lg border border-gray-400 hover:bg-white/5 flex items-center justify-center gap-2">
+          <CogIcon /> Settings
+        </button>
       </div>
     </aside>
   );

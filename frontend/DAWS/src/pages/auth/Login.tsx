@@ -1,16 +1,38 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/Input";
 import GradientButton from "../../components/GradientButton";
 import { Link } from "react-router-dom";
+import { loginUser } from "../../utils/authApi";
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
+  const [error, setError] = useState<string>("");
 
-  const handleLogin = () => {
-    console.log({ email, password });
-    // API will be added in Day 4
+  const handleLogin = async () => {
+    try {
+      const res = await loginUser(form); // pass form object
+
+      //  Save token
+      localStorage.setItem("daws_token", res.data.token);
+
+      //  Save user info (optional but useful)
+      if (res.data.user) {
+        localStorage.setItem("daws_user", JSON.stringify(res.data.user));
+      }
+
+      //  Auto redirect to dashboard
+      navigate("/");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
@@ -22,20 +44,29 @@ export default function Login() {
         Login to continue your workspace
       </p>
 
+      {/* Show error if login fails */}
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+      {/* Email input */}
       <Input
         label="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        type="email"
+        value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
+
+      {/* Password input */}
       <Input
         label="Password"
         type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })}
       />
 
+      {/* Login button */}
       <GradientButton title="Login" onClick={handleLogin} />
 
+      {/* Register link */}
       <p className="text-sm mt-4 text-center text-gray-500">
         Don't have an account?
         <Link to="/register" className="text-[#FF5894] ml-1">

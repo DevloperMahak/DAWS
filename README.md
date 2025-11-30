@@ -1,6 +1,6 @@
 # DAWS (Developer AI Workspace System)
 
-![DAWS Logo](<./src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
+![DAWS Logo](<./frontend/DAWS/src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
 
 ## Table of Contents
 

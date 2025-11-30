@@ -1,13 +1,23 @@
 import React, { useState } from "react";
+import { docsAgent } from "../utils/agentsApi";
 
 export default function DocumentationAgent() {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("summary");
   const [output, setOutput] = useState("");
 
-  const generateDoc = () => {
+  const generateDoc = async () => {
     if (!input.trim()) return;
-    setOutput(`Generated documentation for: ${input}`);
+
+    setOutput("⏳ Generating documentation...");
+
+    try {
+      const { data } = await docsAgent(input, "gemini-2.5-pro");
+      setOutput(data.result || "No documentation generated.");
+    } catch (err) {
+      console.error("DocsAgent Error:", err);
+      setOutput("❌ Something went wrong. Try again.");
+    }
   };
 
   return (

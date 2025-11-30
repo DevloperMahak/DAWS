@@ -2,37 +2,29 @@ import React, { useState } from "react";
 
 export default function PlannerAgent() {
   const [input, setInput] = useState("");
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
     if (!input.trim()) return;
-
     setLoading(true);
     setResult(null);
 
-    setTimeout(() => {
-      setResult(`
-📌 **AI-Generated Planning Breakdown**
+    try {
+      const res = await fetch("http://localhost:5000/agents/planning", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ goal: input }),
+      });
 
-**User Goal:** ${input}
+      const data = await res.json();
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+      setResult({ error: "Something went wrong. Try again." });
+    }
 
-### 🎯 Step 1: Identify Requirements  
-AI breaks down your idea into functional + non-functional requirements.
-
-### 🛠 Step 2: Technical Architecture  
-Stack, UI/UX flow, backend needs, APIs, database, agents, etc.
-
-### 📋 Step 3: Task Breakdown  
-Features → User Stories → Subtasks → Timeline.
-
-### 🚀 Step 4: Delivery Plan  
-Milestones + deadlines + team assignment.
-
-(Backend integration will return a real dynamic plan.)
-      `);
-      setLoading(false);
-    }, 1500);
+    setLoading(false);
   };
 
   return (
@@ -41,11 +33,13 @@ Milestones + deadlines + team assignment.
       style={{ background: "var(--bg)", color: "var(--text)" }}
     >
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4">🧠 Planner Agent</h1>
+        <h1 className="text-4xl font-bold mb-4">
+          🧠 NotebookLM-Style Planner Agent
+        </h1>
         <p className="mb-8 text-gray-600 dark:text-gray-400">
-          Convert your idea or requirement into a{" "}
-          <strong>structured plan</strong>, including tasks, architecture,
-          milestones, timelines, and dependencies.
+          AI will generate a{" "}
+          <strong>NotebookLM-style complete project plan</strong> including
+          mindmap, architecture, tasks, and milestones.
         </p>
 
         {/* Input Card */}
@@ -70,7 +64,7 @@ Milestones + deadlines + team assignment.
             disabled={loading}
             className="mt-4 w-full md:w-auto px-6 py-3 rounded-lg bg-orange-500 hover:bg-orange-600 disabled:opacity-50 font-semibold text-black"
           >
-            {loading ? "Generating..." : "Generate Plan"}
+            {loading ? "Generating..." : "Generate AI Plan"}
           </button>
         </div>
 
@@ -80,8 +74,48 @@ Milestones + deadlines + team assignment.
             className="mt-8 rounded-xl p-6 shadow-lg border border-gray-300 dark:border-gray-700 whitespace-pre-wrap"
             style={{ background: "var(--bg2)" }}
           >
-            <h2 className="text-xl font-semibold mb-3">📄 Generated Plan</h2>
-            <div style={{ color: "var(--text)" }}>{result}</div>
+            <h2 className="text-xl font-semibold mb-3">📄 AI Generated Plan</h2>
+
+            {result.error && <p className="text-red-500">{result.error}</p>}
+
+            {result.mindmap && (
+              <>
+                <h3 className="text-lg font-bold mt-4">🧩 Mindmap</h3>
+                <pre className="p-3 bg-black text-green-400 rounded-lg">
+                  {result.mindmap}
+                </pre>
+              </>
+            )}
+
+            {result.breakdown && (
+              <>
+                <h3 className="text-lg font-bold mt-4">📌 Breakdown</h3>
+                <div>{result.breakdown}</div>
+              </>
+            )}
+
+            {result.architecture && (
+              <>
+                <h3 className="text-lg font-bold mt-4">
+                  🏛 Technical Architecture
+                </h3>
+                <div>{result.architecture}</div>
+              </>
+            )}
+
+            {result.tasks && (
+              <>
+                <h3 className="text-lg font-bold mt-4">📝 Task Breakdown</h3>
+                <div>{result.tasks}</div>
+              </>
+            )}
+
+            {result.milestones && (
+              <>
+                <h3 className="text-lg font-bold mt-4">🚀 Milestones</h3>
+                <div>{result.milestones}</div>
+              </>
+            )}
           </div>
         )}
       </div>
