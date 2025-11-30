@@ -105,54 +105,61 @@ export default function RequirementsAgent() {
         }}
       >
         <label className="font-semibold">Describe your requirement:</label>
-        <textarea
-          rows={5}
-          placeholder="I need users to sign in with multiple payment options..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="w-full p-3 rounded-md resize-none"
+
+        {/* ChatGPT Style Input Bar */}
+        <div
+          className="flex items-center w-full p-3 rounded-lg"
           style={{
             background: "var(--input-bg)",
             border: "1px solid var(--card-border)",
-            color: "var(--text)",
           }}
-        />
-
-        {/* File Upload */}
-        <div>
-          <label className="font-semibold">
-            Upload Image / Audio (optional):
-          </label>
-          <input
-            type="file"
-            accept="image/*,audio/*"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="mt-2 w-full cursor-pointer"
+        >
+          <textarea
+            rows={3}
+            placeholder="Explain your requirement…"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="w-full resize-none bg-transparent outline-none text-sm"
+            style={{ color: "var(--text)" }}
           />
-        </div>
 
-        {/* Audio Recording */}
-        <div className="flex gap-4 items-center">
+          {/* File Upload Icon */}
+          <label className="cursor-pointer ml-3">
+            <input
+              type="file"
+              accept="image/*,audio/*"
+              className="hidden"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            <span className="text-xl opacity-80 hover:opacity-100">📎</span>
+          </label>
+
+          {/* Voice Input Icon */}
           {!recording ? (
             <button
               onClick={startRecording}
-              className="px-4 py-2 rounded-md bg-red-600 text-white"
+              className="ml-3 text-xl opacity-80 hover:opacity-100"
             >
-              🎤 Start Recording
+              🎤
             </button>
           ) : (
             <button
               onClick={stopRecording}
-              className="px-4 py-2 rounded-md bg-green-600 text-white"
+              className="ml-3 text-xl opacity-80 hover:opacity-100 text-red-500"
             >
-              ⏹ Stop Recording
+              ⏹
             </button>
           )}
-
-          {audioBlob && (
-            <audio controls src={URL.createObjectURL(audioBlob)}></audio>
-          )}
         </div>
+
+        {/* Audio Preview */}
+        {audioBlob && (
+          <audio
+            controls
+            src={URL.createObjectURL(audioBlob)}
+            className="mt-2 w-full"
+          ></audio>
+        )}
 
         {/* Model Selector */}
         <div>
@@ -172,7 +179,7 @@ export default function RequirementsAgent() {
           </select>
         </div>
 
-        {/* Buttons */}
+        {/* Extract Button */}
         <button
           onClick={handleExtract}
           disabled={loading}
