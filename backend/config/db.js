@@ -17,4 +17,12 @@ const pool = mysql.createPool({
   },
 });
 
+pool.getConnection((err, connection) => {
+  if (err) console.error("❌ DB Connection Error:", err);
+  else {
+    console.log("✅ MySQL Connected Successfully");
+    connection.release();
+  }
+});
+
 export default pool;
