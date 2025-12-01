@@ -7,6 +7,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 
 const app = express();
 
+//app.use(cors({ origin: "https://daws-frontend.onrender.com" }));
 app.use(cors({ origin: "https://daws-frontend.onrender.com" }));
 
 app.use(express.json());
@@ -16,4 +17,5 @@ app.use("/api", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/agents", agentsRoutes);
 app.use("/projects", projectRoutes);
+app.use("/a2a", agentsRoutes);
 export default app;

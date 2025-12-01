@@ -1,46 +1,64 @@
-import React, { useState, useRef } from "react";
-import { reqAgent } from "../utils/agentsApi";
+import React, { useState, useEffect } from "react";
+import { a2aMessage, reqAgent, fetchInbox } from "../utils/agentsApi";
+import { FiMic, FiUpload } from "react-icons/fi";
 
 export default function RequirementsAgent() {
   const [model, setModel] = useState("gemini-1.5-pro");
   const [input, setInput] = useState("");
-  const [file, setFile] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
-
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
   const [requirementsList, setRequirementsList] = useState([]);
+  const [outgoingMsg, setOutgoingMsg] = useState("");
+  const [inbox, setInbox] = useState([]);
+  const [listening, setListening] = useState(false);
 
-  const mediaRecorderRef = useRef(null);
-  const [recording, setRecording] = useState(false);
+  const loadInbox = async () => {
+    const res = await fetchInbox("requirements");
+    setInbox(res || []);
+  };
 
-  // 🎤 Start Audio Recording
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = recorder;
+  useEffect(() => {
+    loadInbox();
+  }, []);
 
-    const audioChunks = [];
+  // -------------------------------
+  // Voice input
+  // -------------------------------
+  const handleVoiceInput = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice input");
+      return;
+    }
 
-    recorder.ondataavailable = (e) => audioChunks.push(e.data);
-    recorder.onstop = () => {
-      const blob = new Blob(audioChunks, { type: "audio/mp3" });
-      setAudioBlob(blob);
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    recognition.onstart = () => setListening(true);
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join("");
+      setInput(transcript);
     };
 
-    recorder.start();
-    setRecording(true);
+    recognition.onerror = (err) => {
+      console.error(err);
+      setListening(false);
+    };
+
+    recognition.onend = () => setListening(false);
+
+    recognition.start();
   };
 
-  // 🎤 Stop Recording
-  const stopRecording = () => {
-    mediaRecorderRef.current.stop();
-    setRecording(false);
-  };
-
-  // 📤 Submit to Backend
   const handleExtract = async () => {
-    if (!input.trim() && !file && !audioBlob) return;
+    if (!input.trim() && !file) return;
 
     setLoading(true);
     setResult("");
@@ -49,181 +67,225 @@ export default function RequirementsAgent() {
       const fd = new FormData();
       fd.append("text", input);
       fd.append("model", model);
-
       if (file) fd.append("file", file);
-      if (audioBlob) fd.append("file", audioBlob);
 
       const response = await reqAgent(fd);
-
       setResult(response.data.result);
 
-      // Append requirement into list
+      await a2aMessage({
+        from: "requirements",
+        to: "planner",
+        message: response.data.result,
+      });
+
       setRequirementsList((prev) => [
         ...prev,
         {
           id: `REQ-${(prev.length + 1).toString().padStart(3, "0")}`,
-          title: response.data.result.slice(0, 50) + "...",
+          title: response.data.result.slice(0, 60),
           type: "Functional",
           priority: "Medium",
           status: "Draft",
           createdAt: new Date().toLocaleDateString(),
         },
       ]);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setResult("❌ Something went wrong");
     }
 
     setLoading(false);
   };
 
+  const extractTextFromFile = async (file: File) => {
+    const ext = file.name.split(".").pop().toLowerCase();
+
+    if (["png", "jpg", "jpeg"].includes(ext)) {
+      // IMAGE → OCR
+      const form = new FormData();
+      form.append("file", file);
+      form.append("ocr", "true");
+
+      const res = await reqAgent(form);
+      setInput(res.data.text || "");
+    } else if (ext === "pdf") {
+      // PDF → TEXT
+      const form = new FormData();
+      form.append("file", file);
+      form.append("pdf_to_text", "true");
+
+      const res = await reqAgent(form);
+      setInput(res.data.text || "");
+    } else if (["mp3", "wav", "m4a"].includes(ext)) {
+      // AUDIO → SPEECH-TO-TEXT
+      const form = new FormData();
+      form.append("file", file);
+      form.append("stt", "true");
+
+      const res = await reqAgent(form);
+      setInput(res.data.text || "");
+    } else {
+      alert("File format not supported");
+    }
+  };
+
+  const sendA2AMessage = async () => {
+    if (!outgoingMsg.trim()) return;
+
+    await a2aMessage({
+      from: "requirements",
+      to: "planner",
+      message: outgoingMsg,
+    });
+
+    await loadInbox();
+    setOutgoingMsg("");
+    alert("Message sent!");
+  };
+
   return (
-    <div
-      className="min-h-screen p-6 transition-all"
-      style={{ background: "var(--bg)", color: "var(--text)" }}
-    >
-      {/* Header */}
+    <div className="max-w-4xl mx-auto w-full space-y-6">
+      {/* HEADER */}
       <div
-        className="p-4 rounded-lg shadow-md"
-        style={{
-          background: "var(--card-bg)",
-          border: "1px solid var(--card-border)",
-        }}
+        className="p-6 rounded-2xl shadow-md transition
+        bg-[var(--card-bg)] text-[var(--text)]
+        border border-[color-mix(in_oklab,var(--text),transparent 80%)]"
       >
-        <h1 className="text-2xl font-bold flex justify-between">
-          📝 Multimodal Requirements Agent
-          <span className="text-sm opacity-70">AI Workspace</span>
-        </h1>
+        <h1 className="text-2xl font-bold">📝 Requirements Agent</h1>
       </div>
 
-      {/* Input Section */}
+      {/* INPUT AREA */}
       <div
-        className="mt-4 p-5 rounded-xl space-y-4"
-        style={{
-          background: "var(--card-bg)",
-          border: "1px solid var(--card-border)",
-        }}
+        className="p-6 rounded-2xl space-y-4 transition
+        bg-[var(--card-bg)] text-[var(--text)]
+        border border-[color-mix(in_oklab,var(--text),transparent 80%)]"
       >
         <label className="font-semibold">Describe your requirement:</label>
 
-        {/* ChatGPT Style Input Bar */}
         <div
-          className="flex items-center w-full p-3 rounded-lg"
-          style={{
-            background: "var(--input-bg)",
-            border: "1px solid var(--card-border)",
-          }}
+          className="flex items-center w-full p-3 rounded-lg space-x-3 transition
+          bg-[var(--bg)] border border-[color-mix(in_oklab,var(--text),transparent 50%)]"
         >
           <textarea
             rows={3}
-            placeholder="Explain your requirement…"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            placeholder="Explain your requirement…"
             className="w-full resize-none bg-transparent outline-none text-sm"
-            style={{ color: "var(--text)" }}
           />
 
-          {/* File Upload Icon */}
-          <label className="cursor-pointer ml-3">
+          <label className="cursor-pointer">
             <input
               type="file"
               accept="image/*,audio/*"
               className="hidden"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={async (e) => {
+                const f = e.target.files[0];
+                setFile(f);
+                if (f) await extractTextFromFile(f);
+              }}
             />
-            <span className="text-xl opacity-80 hover:opacity-100">📎</span>
+            <FiUpload size={22} className="opacity-80 hover:opacity-100" />
           </label>
 
-          {/* Voice Input Icon */}
-          {!recording ? (
-            <button
-              onClick={startRecording}
-              className="ml-3 text-xl opacity-80 hover:opacity-100"
-            >
-              🎤
-            </button>
-          ) : (
-            <button
-              onClick={stopRecording}
-              className="ml-3 text-xl opacity-80 hover:opacity-100 text-red-500"
-            >
-              ⏹
-            </button>
-          )}
-        </div>
-
-        {/* Audio Preview */}
-        {audioBlob && (
-          <audio
-            controls
-            src={URL.createObjectURL(audioBlob)}
-            className="mt-2 w-full"
-          ></audio>
-        )}
-
-        {/* Model Selector */}
-        <div>
-          <label className="font-semibold">AI Model</label>
-          <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="ml-2 px-3 py-2 rounded-md"
+          <FiMic
+            size={22}
             style={{
-              background: "var(--input-bg)",
-              border: "1px solid var(--card-border)",
-              color: "var(--text)",
+              color: listening ? "red" : "var(--text)",
+              opacity: 0.85,
+              cursor: "pointer",
+              transition: "0.2s ease",
             }}
-          >
-            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-            <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-          </select>
+            onClick={handleVoiceInput}
+            className="hover:opacity-100"
+          />
         </div>
 
-        {/* Extract Button */}
         <button
           onClick={handleExtract}
           disabled={loading}
-          className="w-full py-3 rounded-md font-semibold bg-yellow-500 text-black mt-2"
+          className="w-full py-3 rounded-lg font-semibold
+          bg-gradient-to-r from-[#8441A4] to-[#FF5894] text-white transition"
         >
           {loading ? "Extracting…" : "🤖 Extract Requirements"}
         </button>
       </div>
 
-      {/* Output Box */}
+      {/* OUTPUT */}
       <div
-        className="mt-4 p-4 rounded-xl whitespace-pre-line"
+        className="mt-6 p-6 rounded-xl shadow-lg"
         style={{
-          minHeight: 120,
           background: "var(--card-bg)",
           border: "1px solid var(--card-border)",
         }}
       >
-        {loading ? "Processing…" : result || "Output will appear here…"}
+        <h2 className="text-xl font-bold mb-3">📤 Extracted Requirements</h2>
+
+        <pre
+          className="p-4 rounded-lg max-h-[400px] overflow-auto"
+          style={{
+            background: "black",
+            color: "lime",
+            fontSize: "0.9rem",
+          }}
+        >
+          {loading
+            ? "Processing..."
+            : result
+            ? result
+            : "Output will appear here…"}
+        </pre>
       </div>
 
-      {/* Requirements List */}
+      {/* SEND MESSAGE */}
       <div
-        className="mt-6 p-4 rounded-xl"
-        style={{
-          background: "var(--card-bg)",
-          border: "1px solid var(--card-border)",
-        }}
+        className="p-6 rounded-2xl transition
+        bg-[var(--card-bg)] text-[var(--text)]
+        border border-[color-mix(in_oklab,var(--text),transparent 80%)]"
       >
-        <h2 className="text-xl font-bold mb-3">📋 Extracted Requirements</h2>
+        <h2 className="text-xl font-bold mb-2">
+          📤 Send Message to Planner Agent
+        </h2>
 
-        {requirementsList.map((req) => (
+        <textarea
+          className="w-full p-3 rounded-lg border
+          bg-[var(--bg)] text-[var(--text)]
+          border-[color-mix(in_oklab,var(--text),transparent 50%)]"
+          placeholder="Type message…"
+          value={outgoingMsg}
+          onChange={(e) => setOutgoingMsg(e.target.value)}
+        />
+
+        <button
+          onClick={sendA2AMessage}
+          className="mt-3 px-4 py-2 rounded-lg font-semibold
+          bg-gradient-to-r from-[#8441A4] to-[#FF5894] text-white transition"
+        >
+          Send Message
+        </button>
+      </div>
+
+      {/* INBOX */}
+      <div
+        className="p-6 rounded-2xl transition
+        bg-[var(--card-bg)] text-[var(--text)]
+        border border-[color-mix(in_oklab,var(--text),transparent 80%)]"
+      >
+        <h2 className="text-xl font-bold mb-2">
+          📩 Messages From Planner Agent
+        </h2>
+
+        {inbox.length === 0 && (
+          <p className="opacity-70 text-sm">No messages received yet.</p>
+        )}
+
+        {inbox.map((msg, i) => (
           <div
-            key={req.id}
-            className="p-3 rounded-md mb-2"
-            style={{
-              background: "var(--input-bg)",
-              border: "1px solid var(--card-border)",
-            }}
+            key={i}
+            className="p-3 mb-2 rounded-lg transition
+            bg-[var(--bg)] text-[var(--text)]
+            border border-[color-mix(in_oklab,var(--text),transparent 50%)]"
           >
-            <div className="font-semibold">
-              {req.id} — {req.priority}
-            </div>
-            <div className="opacity-80">{req.title}</div>
+            {msg.message}
           </div>
         ))}
       </div>
