@@ -13,13 +13,10 @@
 - [Solution](#solution)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Setup & Installation](#setup--installation)
-- [Folder Structure](#Folder-Structure)
-- [Usage](#usage)
-- [Screenshots / Diagrams](#Project Showcase)
-- [Contributing](#contributing)
-- [License](#license)
+- [Tech Stack](#tech-stack)
+- [How to Run the Project](#how-to-run-the-project)
+- [Folder Structure](#folder-structure)
+- [Project Showcase](#project-showcase)
 
 ---
 
@@ -62,11 +59,11 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 
 ## Key Features
 
-1. **Task Management Integration** – Sync Jira tasks directly.
-2. **Documentation Hub** – Connect Notion and Google Docs.
-3. **Design Integration** – View and comment on Figma files.
-4. **Code Assistance** – AI-driven code suggestions and documentation.
-5. **Notifications & Alerts** – Stay updated on project progress.
+1. **Multi-Agent System** – Five specialized AI agents (Planner, Requirements, Documentation, Developer Assistant, Knowledge) work together like an autonomous dev team.
+2. **Agent-to-Agent Messaging (A2A)** – Agents communicate internally through an inbox system to refine plans, clarify requirements, and coordinate tasks.
+3. **Full-Stack Workflow Automation** – From requirement extraction to planning, documentation, and coding—DAWS automates the software development lifecycle end-to-end.
+4. **Multimodal Input** – Accepts voice commands, text input, and file uploads—making DAWS flexible for all types of tasks.
+5. **Dark & Light Theme Support** – Switchable dark and light themes, improving readability and user experience.
 6. **Analytics Dashboard** – Visualize team performance and timelines.
 
 ---
