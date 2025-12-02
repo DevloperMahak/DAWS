@@ -159,7 +159,7 @@ export default function Sidebar() {
         <button className="w-full py-2 text-sm font-medium text-white rounded-lg bg-gradient-to-r from-purple-500 to-pink-500">
           Export
         </button>
-        <button className="w-full py-2 text-sm font-medium text-gray-200 rounded-lg border border-gray-400 hover:bg-white/5 flex items-center justify-center gap-2">
+        <button className="w-full py-2 text-sm font-medium rounded-lg border border-gray-400 hover:bg-white/5 flex items-center justify-center gap-2 text-[var(--text)]">
           <CogIcon /> Settings
         </button>
       </div>

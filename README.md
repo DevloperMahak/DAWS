@@ -13,9 +13,9 @@
 - [Solution](#solution)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
-- [Technologies Used](#🛠️ Tech Stack)
-- [Setup & Installation](# How to Run the Project)
-- [Folder Structure](#📁 Folder Structure)
+- [Technologies Used](#technologies-used)
+- [Setup & Installation](#setup--installation)
+- [Folder Structure](#Folder-Structure)
 - [Usage](#usage)
 - [Screenshots / Diagrams](#Project Showcase)
 - [Contributing](#contributing)
@@ -82,7 +82,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 - **APIs:** Authentication API , Agents APIs , CRUD API for projects
 - **Deployment:** Render(Frontend , backend) , Railway(MySQL)
 
-## How to Run the Project
+## 🧪 How to Run the Project
 
 ### Requirements:
 
@@ -140,10 +140,15 @@ DAWS/
 │   │   ├── planningController.js
 │   │   └── documentationController.js
 │   ├── routes/
-│   │   └── agentsRoutes.js
+│   │   ├── agentsRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── projectRoutes.js
+│   │   └── userRoutes.js
 │   ├── services/
-│   │   └── llmService.js
+│   │   ├── llmService.js
+│   │   └── requirementsController.js
 │   ├── server.js
+│   ├── app.js
 │   └── package.json
 │
 └── frontend/
