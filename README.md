@@ -2,8 +2,9 @@
 
 # 🚀 Project Title
 
-> **DAWS (Developer AI Workspace System)**
-> "One Central Workspace for All Stages of App/Web Development"
+### DAWS (Developer AI Workspace System)
+
+**"One Central Workspace for All Stages of App/Web Development"**
 
 ## Table of Contents
 
@@ -12,11 +13,11 @@
 - [Solution](#solution)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Setup & Installation](#setup--installation)
-- [Folder Structure](#folder-structure)
+- [Technologies Used](#🛠️ Tech Stack)
+- [Setup & Installation](# How to Run the Project)
+- [Folder Structure](#📁 Folder Structure)
 - [Usage](#usage)
-- [Screenshots / Diagrams](#screenshots--diagrams)
+- [Screenshots / Diagrams](#Project Showcase)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -70,8 +71,6 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 
 ---
 
-## Architecture
-
 ## 🛠️ Tech Stack
 
 ### Core Technologies Used:
@@ -83,7 +82,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 - **APIs:** Authentication API , Agents APIs , CRUD API for projects
 - **Deployment:** Render(Frontend , backend) , Railway(MySQL)
 
-## 🧪 How to Run the Project
+## How to Run the Project
 
 ### Requirements:
 
@@ -96,9 +95,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 **1. Clone**
 
 ```bash
-# Clone the repo
 git clone https://github.com/DevloperMahak/AI_Project.git
-
 ```
 
 **2. Backend Setup**
@@ -112,7 +109,6 @@ Create .env:
 
 ```bash
 GEMINI_API_KEY=your_key_here
-npm install
 ```
 
 Run backend:
@@ -161,3 +157,17 @@ DAWS/
     │   └── App.tsx
     ├── package.json
 ```
+
+## Project Showcase
+
+![DAWS Dashboard](./frontend/DAWS/src/assets/Dashboard.png)
+
+![DAWS Projects](./frontend/DAWS/src/assets/Projects.png)
+
+![DAWS Projects](./frontend/DAWS/src/assets/PlannerAgent.png)
+
+![DAWS Projects](./frontend/DAWS/src/assets/Dev_AssistantAgent.png)
+
+![DAWS Projects](./frontend/DAWS/src/assets/RequirementAgent.png)
+
+![DAWS Projects](./frontend/DAWS/src/assets/Knowledge_Agent.png)
