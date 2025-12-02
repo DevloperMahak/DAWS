@@ -12,7 +12,6 @@
 - [Problem Statement](#problem-statement)
 - [Solution](#solution)
 - [Key Features](#key-features)
-- [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [How to Run the Project](#how-to-run-the-project)
 - [Folder Structure](#folder-structure)
@@ -68,7 +67,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Core Technologies Used:
 
@@ -79,7 +78,7 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 - **APIs:** Authentication API , Agents APIs , CRUD API for projects
 - **Deployment:** Render(Frontend , backend) , Railway(MySQL)
 
-## 🧪 How to Run the Project
+## How to Run the Project
 
 ### Requirements:
 
@@ -124,7 +123,7 @@ npm run dev
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```bash
 
