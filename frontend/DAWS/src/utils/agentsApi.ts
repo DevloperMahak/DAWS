@@ -32,7 +32,7 @@ export const a2aMessage = (payload: {
 }) => API.post("/agents/run", payload);
 
 export const fetchInbox = async (agent) => {
-  const res = await fetch(`http://localhost:5000/a2a/inbox/${agent}`);
+  const res = await fetch(`https://daws-backend.onrender.com/a2a/inbox/${agent}`);
   return await res.json();
 };
 
