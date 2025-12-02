@@ -1,6 +1,9 @@
-# DAWS (Developer AI Workspace System)
-
 ![DAWS Logo](<./frontend/DAWS/src/assets/DAWS_Thumbnail_Clean_560x280%20(1).jpg>)
+
+# 🚀 Project Title
+
+> **DAWS (Developer AI Workspace System)**
+> "One Central Workspace for All Stages of App/Web Development"
 
 ## Table of Contents
 
@@ -68,3 +71,93 @@ DAWS solves this by providing a **centralized workspace** that integrates these 
 ---
 
 ## Architecture
+
+## 🛠️ Tech Stack
+
+### Core Technologies Used:
+
+- **Frontend:** React + TypeScript , Tailwind CSS
+- **Backend:** Node.js , Express.js
+- **Database:** MySQL2
+- **UI/UX Designing:** Figma
+- **APIs:** Authentication API , Agents APIs , CRUD API for projects
+- **Deployment:** Render(Frontend , backend) , Railway(MySQL)
+
+## 🧪 How to Run the Project
+
+### Requirements:
+
+- Node.js / React / MySQL
+- API Keys (GEMINI_API_KEY)
+- .env file setup (if needed)
+
+### Local Setup Instruction:
+
+**1. Clone**
+
+```bash
+# Clone the repo
+git clone https://github.com/DevloperMahak/AI_Project.git
+
+```
+
+**2. Backend Setup**
+
+```bash
+cd backend
+npm install
+```
+
+Create .env:
+
+```bash
+GEMINI_API_KEY=your_key_here
+npm install
+```
+
+Run backend:
+
+```bash
+npm start
+```
+
+**2. Frontend Setup**
+
+```bash
+cd frontend/DAWS
+npm install
+npm run dev
+```
+
+---
+
+## 📁 Folder Structure
+
+```bash
+
+DAWS/
+│
+├── backend/
+│   ├── controllers/
+│   │   ├──
+│   │   ├── requirementsController.js
+│   │   ├── planningController.js
+│   │   └── documentationController.js
+│   ├── routes/
+│   │   └── agentsRoutes.js
+│   ├── services/
+│   │   └── llmService.js
+│   ├── server.js
+│   └── package.json
+│
+└── frontend/
+    ├── src/
+    │   ├── agents/
+    │   │   ├── RequirementsAgent.tsx
+    │   │   ├── PlannerAgent.tsx
+    │   │   └── DocsAgent.tsx
+    │   ├── utils/
+    │   │   └── agentsApi.ts
+    │   └── App.tsx
+    ├── package.json
+```
