@@ -18,6 +18,8 @@ export default function RequirementsAgent() {
     setInbox(res || []);
   };
 
+  
+
   useEffect(() => {
     loadInbox();
   }, []);
