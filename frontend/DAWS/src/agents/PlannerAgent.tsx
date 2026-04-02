@@ -1,33 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { a2aMessage, fetchInbox } from "../utils/agentsApi";
+import { useParams } from "react-router-dom";
+
+type PlanResult = {
+  mindmap?: string;
+  breakdown?: string;
+  architecture?: string;
+  tasks?: string;
+  milestones?: string;
+  error?: string;
+};
 
 export default function PlannerAgent() {
+  const { id: projectId } = useParams();
+
   const [input, setInput] = useState("");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<PlanResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("mindmap");
-  const [inbox, setInbox] = useState([]);
-
-  // NEW → A2A manual message UI
+  const [inbox, setInbox] = useState<any[]>([]);
   const [outgoingMsg, setOutgoingMsg] = useState("");
 
-  useEffect(() => {
-    loadInbox();
-  }, []);
-
   const loadInbox = async () => {
-    const res = await fetchInbox("planner");
+    const res = await fetchInbox("planner", projectId);
     setInbox(res || []);
   };
+
+  useEffect(() => {
+    if (projectId) {
+      loadInbox();
+    }
+  }, [projectId]);
 
   const sendA2AMessage = async () => {
     if (!outgoingMsg.trim()) return;
 
     await a2aMessage({
+      projectId,
       from: "planner",
       to: "requirements",
       message: outgoingMsg,
     });
+
     await loadInbox();
     setOutgoingMsg("");
     alert("Message sent to Requirements Agent!");
@@ -45,18 +59,24 @@ export default function PlannerAgent() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ goal: input }),
-        }
+          body: JSON.stringify({
+            goal: input,
+            projectId,
+          }),
+        },
       );
 
       const data = await res.json();
       setResult(data);
 
       await a2aMessage({
+        projectId,
         from: "planner",
         to: "requirements",
         message: data.breakdown || "New plan generated",
       });
+
+      await loadInbox();
     } catch (e) {
       setResult({ error: "Something went wrong" });
     }
@@ -75,9 +95,17 @@ export default function PlannerAgent() {
   const renderTabContent = () => {
     if (!result) return null;
 
-    const data = result[activeTab];
+    const data = result[activeTab as keyof PlanResult];
+
     return (
-      <pre className="p-4 bg-black text-green-400 rounded-lg max-h-[400px] overflow-auto">
+      <pre
+        className="p-4 rounded-lg max-h-[400px] overflow-auto"
+        style={{
+          background: "black",
+          color: "lime",
+          fontSize: "0.9rem",
+        }}
+      >
         {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
       </pre>
     );
@@ -88,13 +116,29 @@ export default function PlannerAgent() {
       className="min-h-screen px-6 py-10"
       style={{ background: "var(--bg)", color: "var(--text)" }}
     >
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">🧠 Planner Agent</h1>
+      <div className="max-w-5xl mx-auto">
+        {/* HEADER */}
+        <div
+          className="p-6 rounded-2xl shadow-md mb-6"
+          style={{
+            background: "var(--card-bg)",
+            border: "1px solid var(--card-border)",
+          }}
+        >
+          <h1 className="text-3xl font-bold">🧠 Planner Agent</h1>
+          <p className="opacity-70 mt-2">
+            Convert requirements into architecture, tasks, and milestones
+          </p>
+        </div>
 
         {/* INPUT BOX */}
         <div
-          className="rounded-xl p-6 shadow-lg border border-gray-300 dark:border-gray-700"
-          style={{ background: "var(--bg2)" }}
+          className="rounded-2xl p-6 shadow-lg"
+          style={{
+            border: "2px solid transparent",
+            background:
+              "linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(90deg, #8441A4, #FF5894) border-box",
+          }}
         >
           <label className="text-lg font-medium">Enter Project Goal</label>
 
@@ -102,41 +146,42 @@ export default function PlannerAgent() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Example: Build an AI-powered developer workspace…"
-            className="w-full mt-3 p-4 rounded-lg border 
-              border-gray-300 dark:border-gray-700 
-              focus:outline-none focus:ring-2 focus:ring-orange-500 h-32"
-            style={{ background: "var(--bg)", color: "var(--text)" }}
+            className="w-full mt-3 p-4 rounded-lg h-32 outline-none"
+            style={{
+              background: "var(--bg)",
+              color: "var(--text)",
+              border: "1px solid var(--card-border)",
+            }}
           />
 
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-4 w-full md:w-auto px-6 py-3 rounded-lg 
-              bg-orange-500 hover:bg-orange-600 disabled:opacity-50 
-              font-semibold text-black"
+            className="mt-4 px-6 py-3 rounded-lg font-semibold text-white
+            bg-gradient-to-r from-[#8441A4] to-[#FF5894]"
           >
-            {loading ? "Generating..." : "Generate AI Plan"}
+            {loading ? "Generating..." : "🚀 Generate AI Plan"}
           </button>
         </div>
 
         {/* TABS */}
         {result && (
           <div
-            className="mt-6 p-6 rounded-xl shadow-lg"
+            className="mt-6 p-6 rounded-2xl shadow-lg"
             style={{
               background: "var(--card-bg)",
               border: "1px solid var(--card-border)",
             }}
           >
-            <div className="flex space-x-3 border-b pb-2">
+            <div className="flex flex-wrap gap-3 border-b pb-3">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-t-lg ${
+                  className={`px-4 py-2 rounded-lg transition ${
                     activeTab === tab.id
-                      ? "bg-yellow-500 text-black"
-                      : "opacity-60"
+                      ? "bg-gradient-to-r from-[#8441A4] to-[#FF5894] text-white"
+                      : "opacity-70"
                   }`}
                 >
                   {tab.label}
@@ -148,9 +193,9 @@ export default function PlannerAgent() {
           </div>
         )}
 
-        {/* SEND MESSAGE TO REQUIREMENTS AGENT */}
+        {/* SEND MESSAGE */}
         <div
-          className="mt-6 p-5 rounded-xl"
+          className="mt-6 p-6 rounded-2xl"
           style={{
             background: "var(--card-bg)",
             border: "1px solid var(--card-border)",
@@ -161,10 +206,10 @@ export default function PlannerAgent() {
           </h2>
 
           <textarea
-            className="w-full p-3 rounded-lg border"
+            className="w-full p-3 rounded-lg"
             style={{
-              background: "var(--input-bg)",
-              borderColor: "var(--card-border)",
+              background: "var(--bg)",
+              border: "1px solid var(--card-border)",
               color: "var(--text)",
             }}
             placeholder="Type message…"
@@ -174,7 +219,8 @@ export default function PlannerAgent() {
 
           <button
             onClick={sendA2AMessage}
-            className="mt-3 px-4 py-2 bg-yellow-500 rounded-lg text-black font-semibold"
+            className="mt-3 px-4 py-2 rounded-lg text-white font-semibold
+            bg-gradient-to-r from-[#8441A4] to-[#FF5894]"
           >
             Send Message
           </button>
@@ -182,7 +228,7 @@ export default function PlannerAgent() {
 
         {/* INBOX */}
         <div
-          className="mt-6 p-5 rounded-xl"
+          className="mt-6 p-6 rounded-2xl"
           style={{
             background: "var(--card-bg)",
             border: "1px solid var(--card-border)",
@@ -192,14 +238,14 @@ export default function PlannerAgent() {
             📩 Messages From Requirements Agent
           </h2>
 
-          {inbox.length === 0 && <p>No messages yet</p>}
+          {inbox.length === 0 && <p className="opacity-70">No messages yet</p>}
 
           {inbox.map((msg, i) => (
             <div
               key={i}
               className="p-3 mb-2 rounded-lg"
               style={{
-                background: "var(--input-bg)",
+                background: "var(--bg)",
                 border: "1px solid var(--card-border)",
               }}
             >
