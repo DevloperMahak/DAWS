@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { devChatAgent } from "../utils/agentsApi"; // <-- your API
+import { useParams } from "react-router-dom";
+import { devChatAgent } from "../utils/agentsApi";
 
 export default function DevAssistantAgent() {
+  const { id: projectId } = useParams();
+
   const [input, setInput] = useState("");
   const [tab, setTab] = useState("response");
   const [loading, setLoading] = useState(false);
@@ -13,24 +16,30 @@ export default function DevAssistantAgent() {
     explain: "",
   });
 
+  const gradientCardStyle = {
+    border: "2px solid transparent",
+    background:
+      "linear-gradient(var(--card-bg), var(--card-bg)) padding-box, linear-gradient(90deg, #8441A4, #FF5894) border-box",
+  };
+
   const generateResponse = async () => {
     if (!input.trim()) return;
 
     setLoading(true);
 
     try {
-      const res = await devChatAgent(input);
+      const res = await devChatAgent({
+        input,
+        projectId,
+      });
+
       const ai = res.data?.data || "No output";
 
-      // BASIC SPLITTING INTO TABS
       setData({
         response: ai,
-        fixes:
-          "🔧 Extracting fixes:\n" + ai.replace(/```/g, "") || "No fixes found",
-        optimized:
-          "⚡ Optimized version:\n" + ai.replace(/```/g, "") ||
-          "No optimization found",
-        explain: "📘 Explanation:\n" + ai || "No explanation found",
+        fixes: "🔧 Suggested fixes:\n" + ai.replace(/```/g, ""),
+        optimized: "⚡ Optimized version:\n" + ai.replace(/```/g, ""),
+        explain: "📘 Explanation:\n" + ai,
       });
     } catch (err) {
       setData({
@@ -48,19 +57,21 @@ export default function DevAssistantAgent() {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] p-6 transition-all duration-300">
       <div className="max-w-5xl mx-auto">
         {/* HEADER */}
-        <h1 className="text-3xl font-bold mb-4">💻 Developer Assistant</h1>
-        <p className="text-sm opacity-70 mb-8">
-          Ask anything about debugging, optimization, code fixes, or development
-          help.
-        </p>
+        <div
+          className="mb-6 p-5 rounded-xl shadow-sm"
+          style={gradientCardStyle}
+        >
+          <h1 className="text-3xl font-bold mb-2">💻 Developer Assistant</h1>
+          <p className="text-sm opacity-70">
+            Ask anything about debugging, optimization, code fixes, or
+            development help.
+          </p>
+        </div>
 
         {/* INPUT CARD */}
         <div
           className="p-5 rounded-xl shadow-sm mb-8"
-          style={{
-            background: "var(--card-bg)",
-            border: "1px solid var(--card-border)",
-          }}
+          style={gradientCardStyle}
         >
           <label className="text-sm font-medium">
             Enter your code or question:
@@ -82,7 +93,8 @@ export default function DevAssistantAgent() {
           <button
             onClick={generateResponse}
             disabled={loading}
-            className="mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-50"
+            className="mt-4 px-6 py-2 rounded-lg text-white transition disabled:opacity-50
+            bg-gradient-to-r from-[#8441A4] to-[#FF5894]"
           >
             {loading ? "Generating..." : "Generate Response"}
           </button>
@@ -90,13 +102,7 @@ export default function DevAssistantAgent() {
 
         {/* OUTPUT SECTION */}
         {data.response && (
-          <div
-            className="p-5 rounded-xl shadow-sm"
-            style={{
-              background: "var(--card-bg)",
-              border: "1px solid var(--card-border)",
-            }}
-          >
+          <div className="p-5 rounded-xl shadow-sm" style={gradientCardStyle}>
             {/* Tabs */}
             <div
               className="flex gap-3 border-b pb-3"
@@ -106,8 +112,10 @@ export default function DevAssistantAgent() {
                 <button
                   key={t}
                   onClick={() => setTab(t)}
-                  className={`capitalize px-3 py-1 text-sm rounded-lg ${
-                    tab === t ? "bg-blue-600 text-white" : "hover:opacity-70"
+                  className={`capitalize px-3 py-1 text-sm rounded-lg transition ${
+                    tab === t
+                      ? "bg-gradient-to-r from-[#8441A4] to-[#FF5894] text-white"
+                      : "hover:opacity-70"
                   }`}
                 >
                   {t}
