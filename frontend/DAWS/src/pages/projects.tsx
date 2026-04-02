@@ -104,13 +104,14 @@ export default function ProjectsPage() {
       {loading ? (
         <div>Loading...</div>
       ) : projects.length === 0 ? (
-        <div>No projects yet. Create one to get started.</div>
+        <div>No workspaces yet. Create your first AI project workspace.</div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((p) => (
             <div
               key={p.id}
-              className="relative rounded-xl p-4 shadow-md backdrop-blur-md hover:scale-[1.02] transition-all no-theme-border"
+              onClick={() => navigate(`/workspace/${p.id}`)}
+              className="relative cursor-pointer rounded-xl p-4 shadow-md backdrop-blur-md hover:scale-[1.02] transition-all no-theme-border"
               style={{
                 border: "2px solid transparent",
                 background:
@@ -126,6 +127,17 @@ export default function ProjectsPage() {
                   <p className="text-sm text-[var(--text)]/60 mt-1 line-clamp-2">
                     {p.description}
                   </p>
+                  <div className="mt-3 flex gap-2 flex-wrap">
+                    <span className="text-xs px-2 py-1 rounded-full bg-white/5">
+                      4 Requirements
+                    </span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-white/5">
+                      7 Tasks
+                    </span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-white/5">
+                      2 Docs
+                    </span>
+                  </div>
                 </div>
 
                 {/* ACTION BUTTONS */}
@@ -133,13 +145,16 @@ export default function ProjectsPage() {
                   <button
                     onClick={() => navigate(`/projects/${p.id}`)}
                     className="hover:scale-110 transition text-[var(--border)]"
-                    title="Open Project"
+                    title="Enter Workspace"
                   >
                     <FaExternalLinkAlt />
                   </button>
 
                   <button
-                    onClick={() => openEdit(p)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEdit(p);
+                    }}
                     className="hover:scale-110 transition text-yellow-400"
                     title="Edit Project"
                   >
@@ -147,7 +162,10 @@ export default function ProjectsPage() {
                   </button>
 
                   <button
-                    onClick={() => handleDelete(p.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(p.id);
+                    }}
                     className="hover:scale-110 transition text-red-500"
                     title="Delete Project"
                   >
