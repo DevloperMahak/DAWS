@@ -5,12 +5,26 @@ dotenv.config();
 // -----------------------------
 // 1) CREATE POOL USING MYSQL_URL
 // -----------------------------
+// const pool = mysql.createPool({
+//   uri: process.env.MYSQL_URL, // Railway provides this
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0,
+//   ssl: { rejectUnauthorized: false }, // Required for Railway SSL
+// });
+
+// -----------------------------
+// CREATE POOL FOR LOCAL MYSQL
+// -----------------------------
 const pool = mysql.createPool({
-  uri: process.env.MYSQL_URL, // Railway provides this
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  ssl: { rejectUnauthorized: false }, // Required for Railway SSL
 });
 
 // -----------------------------
@@ -20,7 +34,7 @@ pool.getConnection((err, connection) => {
   if (err) {
     console.error("❌ MySQL Connection Error:", err);
   } else {
-    console.log("✅ Connected to Railway MySQL");
+    console.log("✅ Connected to Local MySQL");
     connection.release();
   }
 });
@@ -42,7 +56,7 @@ const createTables = () => {
     (err) => {
       if (err) console.error("❌ Error creating users table:", err);
       else console.log("✔ users table ready");
-    }
+    },
   );
 
   pool.query(
@@ -60,7 +74,7 @@ const createTables = () => {
     (err) => {
       if (err) console.error("❌ Error creating projects table:", err);
       else console.log("✔ projects table ready");
-    }
+    },
   );
 };
 
