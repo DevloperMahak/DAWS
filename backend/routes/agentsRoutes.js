@@ -19,20 +19,24 @@ router.post("/planning", generatePlan);
 router.post("/docs", generateDocs);
 router.post("/dev", devChat);
 router.post("/knowledge", knowledgeSearch);
-router.post("/run", runAgents);
-
-// SEND MESSAGE (A2A)
 router.post("/run", (req, res) => {
-  const { from, to, message } = req.body;
+  const { from, to, message, projectId } = req.body;
 
-  if (!to || !message) {
-    return res.status(400).json({ error: "Missing fields" });
+  if (!to || !message || !projectId) {
+    return res.status(400).json({
+      error: "Missing fields",
+    });
   }
 
-  // Save message to recipient inbox
+  if (!inboxStore[to]) {
+    inboxStore[to] = [];
+  }
+
   inboxStore[to].push({
     from,
+    to,
     message,
+    projectId,
     timestamp: Date.now(),
   });
 
