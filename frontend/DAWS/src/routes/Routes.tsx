@@ -14,6 +14,8 @@ import DevAssistantAgent from "../agents/DevAssistantAgent";
 import KnowledgeAgent from "../agents/KnowledgeAgent";
 import ProtectedRoute from "./ProtectedRoute";
 import ProjectsPage from "../pages/projects";
+import WorkspacePage from "../pages/workspacePage";
+import AutonomousBuilderPage from "../agents/AutonomusBuilder";
 
 export default function AppRoutes() {
   return (
@@ -32,11 +34,24 @@ export default function AppRoutes() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/requirements" element={<RequirementsAgent />} />
+        {/* <Route path="/requirements" element={<RequirementsAgent />} />
         <Route path="/planner" element={<PlannerAgent />} />
         <Route path="/docs" element={<DocumentationAgent />} />
         <Route path="/assistant" element={<DevAssistantAgent />} />
         <Route path="/knowledge" element={<KnowledgeAgent />} />
+        <Route path="/projects/:projectId/requirements" element={<RequirementsAgent />} />
+<Route path="/projects/:projectId/planner" element={<PlannerAgent />} /> */}
+        <Route path="/workspace/:id" element={<WorkspacePage />}>
+          <Route
+            path="autonomous-builder"
+            element={<AutonomousBuilderPage />}
+          />
+          <Route path="requirements" element={<RequirementsAgent />} />
+          <Route path="planner" element={<PlannerAgent />} />
+          <Route path="docs" element={<DocumentationAgent />} />
+          <Route path="assistant" element={<DevAssistantAgent />} />
+          <Route path="knowledge" element={<KnowledgeAgent />} />
+        </Route>
       </Route>
     </Routes>
   );
