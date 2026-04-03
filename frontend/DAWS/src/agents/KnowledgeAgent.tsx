@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { knowledgeAgent } from "../utils/agentsApi";
 import { FiSearch } from "react-icons/fi";
+import { useParams } from "react-router-dom";
 
 export default function KnowledgeAgent() {
+  const { id: projectId } = useParams();
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ export default function KnowledgeAgent() {
     setResponse(null);
 
     try {
-      const res = await knowledgeAgent(query);
+      const res = await knowledgeAgent(query, projectId as string);
       const data = res.data?.data || "No response";
       setResponse(data);
     } catch (err) {
