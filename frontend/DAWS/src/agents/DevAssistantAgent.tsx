@@ -28,10 +28,7 @@ export default function DevAssistantAgent() {
     setLoading(true);
 
     try {
-      const res = await devChatAgent({
-        input,
-        projectId,
-      });
+      const res = await devChatAgent(input, projectId as string);
 
       const ai = res.data?.data || "No output";
 

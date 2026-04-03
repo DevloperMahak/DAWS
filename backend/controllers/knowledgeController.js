@@ -1,35 +1,53 @@
 import { runLLM } from "../services/llmService.js";
+import { saveWorkspaceMemory } from "../utils/workspaceMemory.js";
+import { getWorkspaceMemory } from "../utils/getWorkspaceMemory.js";
 
 export const knowledgeSearch = async (req, res) => {
   try {
-    const { query } = req.body;
+    const { query, projectId } = req.body;
 
-    if (!query) {
+    if (!query || !projectId) {
       return res.status(400).json({
         success: false,
-        message: "Query is required",
+        message: "query and projectId are required",
       });
     }
+
+    const previousMemory = await getWorkspaceMemory(projectId);
+
+    const memoryContext = previousMemory
+      .map(
+        (m) => `
+[${m.agent.toUpperCase()} - ${m.type}]
+${m.content}
+`,
+      )
+      .join("\n");
 
     const prompt = `
 You are a powerful AI knowledge assistant.
 
-Provide the following for the user's query:
+Use project memory:
+${memoryContext}
 
-### 🔍 Summary
-Short and clear.
-
-### 🧠 Explanation
-Explain like I am 12 years old.
-
-### 📚 Extra Knowledge
-Add related facts, examples, and deeper understanding.
-
-User query:
+Now answer this user query:
 ${query}
+
+Provide:
+### 🔍 Summary
+### 🧠 Explanation
+### 📚 Extra Knowledge
 `;
 
     const output = await runLLM(prompt);
+    const aiResponse = output;
+    await saveWorkspaceMemory({
+      projectId,
+      agent: "knowledge",
+      type: "research",
+      title: "Knowledge Search",
+      content: aiResponse,
+    });
 
     res.json({
       success: true,

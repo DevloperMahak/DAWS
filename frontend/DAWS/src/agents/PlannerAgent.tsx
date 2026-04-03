@@ -4,26 +4,55 @@ import { useParams } from "react-router-dom";
 
 type PlanResult = {
   mindmap?: string;
-  breakdown?: string;
-  architecture?: string;
-  tasks?: string;
-  milestones?: string;
+  breakdown?: {
+    summary?: string;
+    requirements?: string;
+    nonFunctional?: string;
+  };
+  architecture?: {
+    frontend?: string;
+    backend?: string;
+    database?: string;
+    APIs?: string;
+    systemDiagram?: string;
+  };
+  tasks?: string[];
+  milestones?: string[];
   error?: string;
 };
 
+type InboxMessage = {
+  from: string;
+  to?: string;
+  message: string;
+  projectId?: string;
+  timestamp?: number;
+};
+
 export default function PlannerAgent() {
-  const { id: projectId } = useParams();
+  const { id: projectId } = useParams<{ id: string }>();
 
   const [input, setInput] = useState("");
   const [result, setResult] = useState<PlanResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("mindmap");
-  const [inbox, setInbox] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<keyof PlanResult>("mindmap");
+  const [inbox, setInbox] = useState<InboxMessage[]>([]);
   const [outgoingMsg, setOutgoingMsg] = useState("");
 
   const loadInbox = async () => {
-    const res = await fetchInbox("planner", projectId);
-    setInbox(res || []);
+    try {
+      const res = await fetchInbox("planner", projectId);
+      const messages = Array.isArray(res) ? res : [];
+      setInbox(messages);
+
+      // ✅ Auto use latest requirements message
+      if (messages.length > 0 && !input) {
+        const latestMessage = messages[messages.length - 1];
+        setInput(latestMessage.message);
+      }
+    } catch (error) {
+      console.error("Inbox load failed:", error);
+    }
   };
 
   useEffect(() => {
@@ -35,27 +64,32 @@ export default function PlannerAgent() {
   const sendA2AMessage = async () => {
     if (!outgoingMsg.trim()) return;
 
-    await a2aMessage({
-      projectId,
-      from: "planner",
-      to: "requirements",
-      message: outgoingMsg,
-    });
+    try {
+      await a2aMessage({
+        projectId,
+        from: "planner",
+        to: "requirements",
+        message: outgoingMsg,
+      });
 
-    await loadInbox();
-    setOutgoingMsg("");
-    alert("Message sent to Requirements Agent!");
+      await loadInbox();
+      setOutgoingMsg("");
+      alert("Message sent to Requirements Agent!");
+    } catch (error) {
+      console.error("Message send failed:", error);
+    }
   };
 
   const handleGenerate = async () => {
     if (!input.trim()) return;
 
-    setLoading(true);
-    setResult(null);
-
     try {
+      setLoading(true);
+      setResult(null);
+
       const res = await fetch(
-        "https://daws-backend.onrender.com/agents/planning",
+        //"https://daws-backend.onrender.com/agents/planning",
+        "http://localhost:5000/agents/planning",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -67,24 +101,38 @@ export default function PlannerAgent() {
       );
 
       const data = await res.json();
+
+      if (!res.ok) {
+        setResult({
+          error: data.error || "Planner failed",
+        });
+        return;
+      }
+
       setResult(data);
 
       await a2aMessage({
         projectId,
         from: "planner",
         to: "requirements",
-        message: data.breakdown || "New plan generated",
+        message:
+          typeof data.breakdown === "object"
+            ? data.breakdown.summary || "New plan generated"
+            : "New plan generated",
       });
 
       await loadInbox();
-    } catch (e) {
-      setResult({ error: "Something went wrong" });
+    } catch (error) {
+      console.error("Planner error:", error);
+      setResult({
+        error: "Something went wrong",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  const tabs = [
+  const tabs: { id: keyof PlanResult; label: string }[] = [
     { id: "mindmap", label: "🧩 Mindmap" },
     { id: "breakdown", label: "📌 Breakdown" },
     { id: "architecture", label: "🏛 Architecture" },
@@ -95,7 +143,7 @@ export default function PlannerAgent() {
   const renderTabContent = () => {
     if (!result) return null;
 
-    const data = result[activeTab as keyof PlanResult];
+    const data = result[activeTab];
 
     return (
       <pre

@@ -28,11 +28,11 @@ export default function DocumentationAgent() {
     setLoading(true);
 
     try {
-      const { data } = await docsAgent({
+      const { data } = await docsAgent(
         input,
-        model: "gemini-2.5-pro",
-        projectId,
-      });
+        projectId as string,
+        "gemini-2.5-pro",
+      );
 
       const result = data.result || "No documentation generated.";
 
