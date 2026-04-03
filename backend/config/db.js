@@ -59,6 +59,7 @@ const createTables = () => {
     },
   );
 
+  // PROJECTS
   pool.query(
     `
     CREATE TABLE IF NOT EXISTS projects (
@@ -74,6 +75,27 @@ const createTables = () => {
     (err) => {
       if (err) console.error("❌ Error creating projects table:", err);
       else console.log("✔ projects table ready");
+    },
+  );
+
+  // WORKSPACE MEMORY
+  pool.query(
+    `
+  CREATE TABLE IF NOT EXISTS workspace_memory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    agent VARCHAR(50) NOT NULL,
+    type VARCHAR(50) DEFAULT 'output',
+    title VARCHAR(255),
+    content LONGTEXT NOT NULL,
+    version INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+  )
+`,
+    (err) => {
+      if (err) console.error("❌ Error creating workspace_memory table:", err);
+      else console.log("✔ workspace_memory table ready");
     },
   );
 };
