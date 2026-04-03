@@ -29,7 +29,7 @@ export default function Navbar() {
         text-[var(--text)]
         border-[color-mix(in_oklab,var(--text),transparent 80%)]
         transition-colors duration-300
-        left-[290px]   
+        left-[260px]   
       "
     >
       <div className="max-w-full px-6">
