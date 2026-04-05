@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { a2aMessage, fetchInbox } from "../utils/agentsApi";
 import { useParams } from "react-router-dom";
+import MindMapFlow from "../components/MindMapTree";
+import NotebookMindMap from "../components/NotebookMindMap";
+
+type MindMapNode = {
+  title: string;
+  children?: MindMapNode[];
+};
 
 type PlanResult = {
-  mindmap?: string;
+  mindmap?: MindMapNode;
   breakdown?: {
     summary?: string;
     requirements?: string;
@@ -101,6 +108,7 @@ export default function PlannerAgent() {
       );
 
       const data = await res.json();
+      console.log("Planner Response:", data);
 
       if (!res.ok) {
         setResult({
@@ -143,18 +151,54 @@ export default function PlannerAgent() {
   const renderTabContent = () => {
     if (!result) return null;
 
+    // ✅ Mindmap Tab
+    if (activeTab === "mindmap") {
+      console.log("Mindmap Data:", result.mindmap);
+      const mapData = result.mindmap;
+
+      if (!mapData) {
+        return <div className="p-4 opacity-70">No mindmap generated yet</div>;
+      }
+
+      return (
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            background: "var(--bg)",
+            border: "1px solid var(--card-border)",
+            height: "500px",
+          }}
+        >
+          <MindMapFlow
+            data={
+              result.mindmap || {
+                title: "No Data",
+                children: [],
+              }
+            }
+          />
+        </div>
+      );
+    }
+
     const data = result[activeTab];
+
+    if (!data) {
+      return (
+        <div className="p-4 opacity-70">No {activeTab} data available</div>
+      );
+    }
 
     return (
       <pre
         className="p-4 rounded-lg max-h-[400px] overflow-auto"
         style={{
-          background: "black",
-          color: "lime",
+          background: "#0f172a",
+          color: "#22c55e",
           fontSize: "0.9rem",
         }}
       >
-        {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
+        {JSON.stringify(data, null, 2)}
       </pre>
     );
   };

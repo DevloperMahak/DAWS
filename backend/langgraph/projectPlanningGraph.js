@@ -8,7 +8,7 @@ const ProjectState = Annotation.Root({
   projectName: Annotation(),
   description: Annotation(),
   requirements: Annotation(),
-  plan: Annotation(),
+  mindmap: Annotation(),
   devOutput: Annotation(),
   documentation: Annotation(),
   currentStep: Annotation(),

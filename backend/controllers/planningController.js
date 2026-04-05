@@ -11,16 +11,12 @@ export const generatePlan = async (req, res) => {
         error: "Goal and projectId are required",
       });
     }
+    // ✅ only latest 3 memories
+    const previousMemory = (await getWorkspaceMemory(projectId)).slice(-3);
 
-    const previousMemory = await getWorkspaceMemory(projectId);
-
+    // ✅ compact memory
     const memoryContext = previousMemory
-      .map(
-        (m) => `
-[${m.agent.toUpperCase()} - ${m.type}]
-${m.content}
-`,
-      )
+      .map((m) => `[${m.agent}] ${m.title}`)
       .join("\n");
 
     const prompt = `
@@ -32,9 +28,77 @@ ${goal}
 Project memory:
 ${memoryContext}
 
-JSON schema:
+ JSON schema:
 {
-  "mindmap": "string",
+  "mindmap": {
+  "title": "Project Name",
+  "children": [
+    {
+      "title": "📌 Requirements",
+      "children": [
+        { "title": "Functional Requirements" },
+        { "title": "Non Functional Requirements" },
+        { "title": "User Roles" }
+      ]
+    },
+    {
+      "title": "🏗 Architecture",
+      "children": [
+        {
+          "title": "Frontend",
+          "children": [
+            { "title": "React + TypeScript" },
+            { "title": "UI Components" },
+            { "title": "State Management" }
+          ]
+        },
+        {
+          "title": "Backend",
+          "children": [
+            { "title": "Node.js + Express" },
+            { "title": "REST APIs" },
+            { "title": "Authentication" }
+          ]
+        },
+        {
+          "title": "Database",
+          "children": [
+            { "title": "Users" },
+            { "title": "Projects" },
+            { "title": "Tasks" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🚀 Milestones",
+      "children": [
+        {
+          "title": "Phase 1",
+          "children": [
+            { "title": "Requirements" },
+            { "title": "Planning" }
+          ]
+        },
+        {
+          "title": "Phase 2",
+          "children": [
+            { "title": "Development" },
+            { "title": "Testing" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "🔌 APIs",
+      "children": [
+        { "title": "Auth API" },
+        { "title": "Project API" },
+        { "title": "Planner API" }
+      ]
+    }
+  ]
+}
   "breakdown": {
     "summary": "string",
     "requirements": "string",
