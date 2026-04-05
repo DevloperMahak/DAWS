@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
 import { runAutonomousBuilder } from "../utils/agentsApi";
+import MindMapFlow from "../components/MindMapTree";
 
 type WorkflowResult = {
   requirements?: string;
-  plan?: string;
+  mindmap?: {
+    title: string;
+    children?: any[];
+  };
   devOutput?: string;
   documentation?: string;
   currentStep?: string;
@@ -12,7 +16,7 @@ type WorkflowResult = {
 type OutputTab =
   | "overview"
   | "requirements"
-  | "plan"
+  | "mindmap"
   | "devOutput"
   | "documentation";
 
@@ -44,7 +48,7 @@ export default function AutonomousBuilderPage() {
         status:
           currentStep === "planner_agent"
             ? "running"
-            : workflowResult?.plan
+            : workflowResult?.mindmap
               ? "done"
               : "pending",
       },
@@ -113,6 +117,7 @@ export default function AutonomousBuilderPage() {
       );
     }
 
+    // ✅ Overview tab
     if (activeTab === "overview") {
       return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -122,15 +127,30 @@ export default function AutonomousBuilderPage() {
               content={workflowResult.requirements}
             />
           )}
-          {workflowResult.plan && (
-            <ResultCard title="🧠 Plan" content={workflowResult.plan} />
+
+          {/* ✅ Planning agent exact same mindmap */}
+          {/* ✅ Planning agent exact same mindmap */}
+          {workflowResult.mindmap && (
+            <div
+              className="lg:col-span-2 rounded-2xl border overflow-hidden"
+              style={{
+                background: "var(--card-bg)",
+                borderColor: "var(--card-border)",
+                height: "600px",
+                width: "100%",
+              }}
+            >
+              <MindMapFlow data={workflowResult.mindmap} />
+            </div>
           )}
+
           {workflowResult.devOutput && (
             <ResultCard
               title="💻 Development"
               content={workflowResult.devOutput}
             />
           )}
+
           {workflowResult.documentation && (
             <ResultCard
               title="📄 Documentation"
@@ -141,7 +161,30 @@ export default function AutonomousBuilderPage() {
       );
     }
 
-    const content = workflowResult[activeTab];
+    // ✅ Mindmap tab special rendering
+    if (activeTab === "mindmap" && workflowResult.mindmap) {
+      return (
+        <div
+          className="rounded-2xl border overflow-hidden"
+          style={{
+            background: "var(--card-bg)",
+            borderColor: "var(--card-border)",
+            height: "650px",
+            width: "100%",
+          }}
+        >
+          <MindMapFlow data={workflowResult.mindmap} />
+        </div>
+      );
+    }
+
+    // ✅ Other tabs normal output
+    const content =
+      activeTab === "requirements"
+        ? workflowResult.requirements
+        : activeTab === "devOutput"
+          ? workflowResult.devOutput
+          : workflowResult.documentation;
 
     return (
       <div
@@ -164,7 +207,7 @@ export default function AutonomousBuilderPage() {
   const tabs: { key: OutputTab; label: string }[] = [
     { key: "overview", label: "📦 Overview" },
     { key: "requirements", label: "📋 Requirements" },
-    { key: "plan", label: "🧠 Plan" },
+    { key: "mindmap", label: "🧠 Mindmap" },
     { key: "devOutput", label: "💻 Code" },
     { key: "documentation", label: "📄 Docs" },
   ];
@@ -292,7 +335,7 @@ export default function AutonomousBuilderPage() {
 
       {/* OUTPUT TABS */}
       <div
-        className="rounded-2xl border p-6"
+        className="rounded-2xl border p-6 overflow-hidden"
         style={{
           background: "var(--card-bg)",
           borderColor: "var(--card-border)",
