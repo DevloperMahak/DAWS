@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "reactflow/dist/style.css";
 import App from "./App.tsx";
 
 createRoot(document.getElementById("root")!).render(
@@ -9,7 +10,7 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // Restore theme from localStorage

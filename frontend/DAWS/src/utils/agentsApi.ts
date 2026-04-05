@@ -67,5 +67,9 @@ export const fetchInbox = async (
   );
   return res.data;
 };
+export type MindMapNode = {
+  title: string;
+  children?: MindMapNode[];
+};
 
 
