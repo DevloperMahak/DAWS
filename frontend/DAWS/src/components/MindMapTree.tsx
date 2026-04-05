@@ -266,6 +266,8 @@ export default function MindMapFlow({ data }: Props) {
             type: "smoothstep",
             animated: false,
           }}
+          minZoom={0.3}
+          maxZoom={1.5}
           panOnDrag
           zoomOnScroll
           nodesDraggable={false}
