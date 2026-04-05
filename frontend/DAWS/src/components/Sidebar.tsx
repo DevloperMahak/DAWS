@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { HomeIcon, CogIcon, FolderIcon } from "./Icons";
 
-const logoUrl = "/mnt/data/05baf53b-2f6f-493c-98c4-608c939f5a14.png";
+const logoUrl = "/DAWS_logo_design.png"; // Replace with your actual logo path
 
 export default function Sidebar() {
   const mainItems = [
@@ -26,24 +26,12 @@ export default function Sidebar() {
       "
     >
       {/* TOP LOGO */}
-      <div className="p-4 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 flex items-center justify-center">
-          <img
-            src={logoUrl}
-            alt="DAWS logo"
-            className="object-cover w-full h-full"
-          />
-        </div>
-        <div>
-          <div className="text-2xl font-bold text-[var(--text)]">
-            <span className="bg-[linear-gradient(135deg,#8441A4,#FF5894)] bg-clip-text text-transparent">
-              DAWS
-            </span>
-          </div>
-          <div className="text-xs text-gray-500 dark:text-[#8b949e]">
-            AI Workspace
-          </div>
-        </div>
+      <div className="px-3 py-4 flex justify-start">
+        <img
+          src={logoUrl}
+          alt="DAWS logo"
+          className="w-[190px] h-auto object-contain"
+        />
       </div>
 
       {/* SCROLLABLE CONTENT */}
